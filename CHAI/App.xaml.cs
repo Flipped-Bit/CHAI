@@ -1,5 +1,7 @@
 using CHAI.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using System.Windows;
 
@@ -21,6 +23,17 @@ namespace CHAI
         public App()
         {
             ServiceCollection services = new ServiceCollection();
+
+            // Added Serilog
+            var serilogLogger = new LoggerConfiguration()
+            .WriteTo.Debug()
+            .CreateLogger();
+            services.AddLogging(options =>
+            {
+                options.SetMinimumLevel(LogLevel.Information);
+                options.AddSerilog(logger: serilogLogger, dispose: true);
+            });
+
             services.AddSingleton<MainWindow>();
             _serviceProvider = services.BuildServiceProvider();
         }
