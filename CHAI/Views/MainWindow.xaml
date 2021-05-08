@@ -19,7 +19,7 @@
         <DataGrid HeadersVisibility="Column" Name="TriggersList" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
                   Grid.Column="1" Grid.ColumnSpan="1" Grid.Row="1" ColumnWidth="*" IsSynchronizedWithCurrentItem="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
             </DataGrid.Columns>
         </DataGrid>    
 </Grid>
