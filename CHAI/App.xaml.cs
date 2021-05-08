@@ -1,4 +1,6 @@
+using CHAI.Data;
 using CHAI.Views;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -30,6 +32,11 @@ namespace CHAI
         public App()
         {
             ServiceCollection services = new ServiceCollection();
+
+            services.AddDbContext<CHAIDbContext>(options =>
+            {
+                options.UseSqlite("Data Source = CHAI.db");
+            });
 
             // Added Serilog
             var serilogLogger = new LoggerConfiguration()
