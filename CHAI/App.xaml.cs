@@ -1,6 +1,10 @@
 using CHAI.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
 using System;
+using System.IO;
 using System.Windows;
 
 namespace CHAI
@@ -10,6 +14,11 @@ namespace CHAI
     /// </summary>
     public partial class App : Application
     {
+        /// <summary>
+        /// The path to <see cref="Environment.SpecialFolder.ApplicationData"/> folder.
+        /// </summary>
+        private static readonly string APPDATAFOLDER = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
         /// <summary>
         /// The injected <see cref="IServiceProvider"/>.
         /// </summary>
@@ -21,6 +30,21 @@ namespace CHAI
         public App()
         {
             ServiceCollection services = new ServiceCollection();
+
+            // Added Serilog
+            var serilogLogger = new LoggerConfiguration()
+            .WriteTo.File(
+                Path.Join(APPDATAFOLDER, "CHAI", $"{DateTime.Now:dd-MM-yyyy}.log"),
+                LogEventLevel.Warning,
+                outputTemplate: "[{SourceContext}] {Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+            .WriteTo.Debug()
+            .CreateLogger();
+            services.AddLogging(options =>
+            {
+                options.SetMinimumLevel(LogLevel.Information);
+                options.AddSerilog(logger: serilogLogger, dispose: true);
+            });
+
             services.AddSingleton<MainWindow>();
             _serviceProvider = services.BuildServiceProvider();
         }
