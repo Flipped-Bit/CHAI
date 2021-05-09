@@ -17,15 +17,15 @@ namespace CHAI.Models.Enums
         /// Condition based on value being greater than or equal to
         ///  <see cref="Trigger.MinimumBits"/>.
         /// </summary>
-        [Description("At least")]
-        Atleast,
+        [Description("Min")]
+        Min,
 
         /// <summary>
         /// Condition based on value being less than or equal to
         ///  <see cref="Trigger.MinimumBits"/>.
         /// </summary>
-        [Description("At most")]
-        Atmost,
+        [Description("Max")]
+        Max,
 
         /// <summary>
         /// Condition based on value being equal to
