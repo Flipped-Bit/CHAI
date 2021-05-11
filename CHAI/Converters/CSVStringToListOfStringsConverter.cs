@@ -22,7 +22,7 @@ namespace CHAI.Converters
         /// <returns>A <see cref="ObservableCollection{T}"/> whose generic type argument is <see cref="string"/> representation of the CSV <see cref="string"/> value.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var input = value.ToString().Split(',');
+            var input = value.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries);
             return new ObservableCollection<string>(input);
         }
 
