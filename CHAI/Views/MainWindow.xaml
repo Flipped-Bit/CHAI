@@ -119,7 +119,7 @@
                         <Button x:Name="CooldownValuePlus" x:FieldModifier="private" FontSize="10" Padding="0,-3,0,0" Content="▲" Height="13" Width="13" Margin="61,0,0,13" Click="CooldownValuePlusClick" />
                         <Button x:Name="CooldownValueMinus" x:FieldModifier="private" FontSize="10" Padding="0,-1,0,0" Content="▼" Height="13" Width="13" Margin="61,12,0,0" Click="CooldownValueMinusClick"/>
                     </Grid>
-                    <ComboBox Name="CooldownUnits" Grid.Column="4" Grid.ColumnSpan="2" Grid.Row="9" Margin="0,0,21.5,0" FontSize="11" ItemsSource="{StaticResource CooldownUnits}" 
+                    <ComboBox Name="CooldownUnits" Grid.Column="4" Grid.ColumnSpan="2" Grid.Row="9" Margin="0,0,20,0" FontSize="11" ItemsSource="{StaticResource CooldownUnits}" 
                               SelectedValuePath="Value" DisplayMemberPath="Key"  SelectedItem="{Binding SelectedItem.CooldownUnit, Converter={StaticResource EnumToStringConverter}, ElementName=TriggersList}"/> 
                     <Label Grid.Column="6" Grid.ColumnSpan="2" Grid.Row="9" Content="Last Triggered:"  FontSize="9"/>
                     <TextBlock Name="LastTriggered" Grid.Column="7" Grid.ColumnSpan="2" Grid.Row="9" Margin="25,5,0,0" FontSize="9" Text="{Binding SelectedItem.LastTriggered, Converter={StaticResource DateTimeToStringConverter}, ElementName=TriggersList}"/>
