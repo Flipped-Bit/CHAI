@@ -1,4 +1,4 @@
-﻿using CHAI.Data;
+using CHAI.Data;
 using CHAI.Extensions;
 using CHAI.Models.Enums;
 using Microsoft.Extensions.Logging;
@@ -6,6 +6,8 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using Trigger = CHAI.Models.Trigger;
 
@@ -40,7 +42,6 @@ namespace CHAI.Views
             _logger = logger;
             InitializeComponent();
             UpdateTriggersList();
-            _logger.LogInformation($"{((Trigger)TriggersList.SelectedItem).Name} selected");
             var window = GetWindow(this);
             window.KeyDown += KeyDown;
             _logger.LogInformation("Main window initialised successfully");
@@ -265,6 +266,16 @@ namespace CHAI.Views
 
             _context.SaveChanges();
             HasUnsavedChanges.Text = "Changes Saved";
+        }
+
+        /// <summary>
+        /// Method for Updating <see cref="KeyValue"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="TriggersListSelectionChanged"/> event.</param>
+        /// <param name="e">Arguments from <see cref="TriggersListSelectionChanged"/> event.</param>
+        private void TriggersListSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            KeyValue.Text = ((Trigger)TriggersList.SelectedItem).CharAnimTriggerKeyChar;
         }
 
         /// <summary>
