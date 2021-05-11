@@ -123,6 +123,22 @@ namespace CHAI.Views
         }
 
         /// <summary>
+        /// Method for deleting a selected <see cref="Trigger"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="DeleteTrigger"/> event.</param>
+        /// <param name="e">Arguments from <see cref="DeleteTrigger"/> event.</param>
+        private void DeleteTrigger(object sender, RoutedEventArgs e)
+        {
+            var selectedTrigger = (Trigger)TriggersList.SelectedItem;
+            if (selectedTrigger != null)
+            {
+                _context.Triggers.Remove(selectedTrigger);
+                _context.SaveChanges();
+                UpdateTriggersList();
+            }
+        }
+
+        /// <summary>
         /// Method for saving Key Press events.
         /// </summary>
         /// <param name="sender">The sender of <see cref="KeyDown"/> event.</param>
@@ -284,22 +300,6 @@ namespace CHAI.Views
         private void UpdateTriggersList()
         {
             TriggersList.ItemsSource = _context.Triggers.ToList();
-        }
-
-        /// <summary>
-        /// Method for deleting a selected <see cref="Trigger"/>.
-        /// </summary>
-        /// <param name="sender">The sender of <see cref="DeleteTrigger"/> event.</param>
-        /// <param name="e">Arguments from <see cref="DeleteTrigger"/> event.</param>
-        private void DeleteTrigger(object sender, RoutedEventArgs e)
-        {
-            var selectedTrigger = (Trigger)TriggersList.SelectedItem;
-            if (selectedTrigger != null)
-            {
-                _context.Triggers.Remove(selectedTrigger);
-                _context.SaveChanges();
-                UpdateTriggersList();
-            }
         }
     }
 }
