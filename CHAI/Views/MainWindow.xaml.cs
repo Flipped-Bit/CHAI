@@ -103,6 +103,25 @@ namespace CHAI.Views
         }
 
         /// <summary>
+        /// Method for creating a new <see cref="Trigger"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="CreateTrigger"/> event.</param>
+        /// <param name="e">Arguments from <see cref="CreateTrigger"/> event.</param>
+        private void CreateTrigger(object sender, RoutedEventArgs e)
+        {
+            var newTrigger = new Trigger()
+            {
+                Name = $"Trigger {TriggersList.Items.Count + 1}",
+                Keywords = string.Empty,
+                CharAnimTriggerKeyChar = string.Empty,
+                CharAnimTriggerKeyValue = 0,
+            };
+            _context.Triggers.Add(newTrigger);
+            _context.SaveChanges();
+            UpdateTriggersList();
+        }
+
+        /// <summary>
         /// Method for saving Key Press events.
         /// </summary>
         /// <param name="sender">The sender of <see cref="KeyDown"/> event.</param>
