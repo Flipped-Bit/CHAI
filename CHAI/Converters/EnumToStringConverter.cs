@@ -1,4 +1,4 @@
-﻿using CHAI.Extensions;
+using CHAI.Extensions;
 using CHAI.Models.Enums;
 using System;
 using System.Globalization;
@@ -22,11 +22,6 @@ namespace CHAI.Converters
         /// <returns>A <see cref="string"/> representation of the <see cref="Enum"/> value.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value.ToString() == "True" || value.ToString() == "False")
-            {
-                return value.ToString();
-            }
-
             var isBitCondition = Enum.IsDefined(typeof(BitsCondition), value.ToString());
 
             var isCooldownUnit = Enum.IsDefined(typeof(CooldownUnit), value.ToString());
