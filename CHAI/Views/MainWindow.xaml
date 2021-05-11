@@ -10,7 +10,9 @@
     <Grid Name="MainGrid" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15"></ColumnDefinition>
-            <ColumnDefinition Width="220"></ColumnDefinition>
+            <ColumnDefinition Width="107"></ColumnDefinition>
+            <ColumnDefinition Width="6"></ColumnDefinition>
+            <ColumnDefinition Width="107"></ColumnDefinition>
             <ColumnDefinition Width="6"></ColumnDefinition>
             <ColumnDefinition Width="82"></ColumnDefinition>
             <ColumnDefinition Width="165"></ColumnDefinition>
@@ -23,15 +25,18 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="15"></RowDefinition>
             <RowDefinition Height="377"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="6"></RowDefinition>
+            <RowDefinition Height="43"></RowDefinition>
+            <RowDefinition Height="26"></RowDefinition>
         </Grid.RowDefinitions>
         <DataGrid HeadersVisibility="Column" Name="TriggersList" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
-                  Grid.Column="1" Grid.ColumnSpan="1" Grid.Row="1" ColumnWidth="*" IsSynchronizedWithCurrentItem="True">
+                  Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" ColumnWidth="*" IsSynchronizedWithCurrentItem="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TabControl Grid.Column="3" Grid.ColumnSpan="8" Grid.Row="1">
+        <Button Grid.Column="3" Grid.Row="3" Content="+" Click="CreateTrigger"/>
+        <TabControl Grid.Column="5" Grid.ColumnSpan="8" Grid.Row="1">
             <TabItem Name="DetailsTab" Header="Details">
                 <Grid Name="DetailsGrid" Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Height="349" Width="677" Margin="0,0,2,1">
                     <Grid.Resources>
