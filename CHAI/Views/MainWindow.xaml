@@ -135,5 +135,6 @@
                 </Grid>
             </TabItem>
         </TabControl>
+        <Button Name="OpenSettings" Grid.Column="10" Grid.Row="3" Content="Settings" Click="OpenSettingsMenu"/>
     </Grid>
 </Window>

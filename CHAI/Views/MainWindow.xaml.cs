@@ -49,6 +49,11 @@ namespace CHAI.Views
         }
 
         /// <summary>
+        /// Gets or sets a <see cref="SettingsWindow"/> child for the <see cref="MainWindow"/>.
+        /// </summary>
+        public SettingsWindow SettingsWindow { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether Key presses are being recorded.
         /// </summary>
         private bool IsRecordingKey { get; set; }
@@ -157,7 +162,6 @@ namespace CHAI.Views
             }
         }
 
-
         /// <summary>
         /// Method for saving all triggers on close.
         /// </summary>
@@ -240,6 +244,30 @@ namespace CHAI.Views
         {
             ((Trigger)TriggersList.SelectedItem).MinimumBits += 1;
             MinimumBitsValue.Text = Convert.ToString(((Trigger)TriggersList.SelectedItem).MinimumBits);
+        }
+
+        /// <summary>
+        /// Method for opening the Settings Menu.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="OpenSettingsMenu"/> event.</param>
+        /// <param name="e">Arguments from <see cref="OpenSettingsMenu"/> event.</param>
+        private void OpenSettingsMenu(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current.Windows.OfType<SettingsWindow>().Any())
+            {
+                Application.Current.Windows.OfType<SettingsWindow>()
+                    .First()
+                    .Activate();
+            }
+            else
+            {
+                SettingsWindow = new SettingsWindow()
+                {
+                    Owner = this,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                SettingsWindow.Show();
+            }
         }
 
         /// <summary>
