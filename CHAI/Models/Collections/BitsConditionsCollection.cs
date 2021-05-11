@@ -1,6 +1,7 @@
 ﻿using CHAI.Extensions;
 using CHAI.Models.Enums;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -9,7 +10,7 @@ namespace CHAI.Models.Collections
     /// <summary>
     /// An <see cref="ObservableCollection{BitsCondition}"/>.
     /// </summary>
-    public class BitsConditionsCollection : ObservableCollection<string>
+    public class BitsConditionsCollection : ObservableCollection<KeyValuePair<string, string>>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BitsConditionsCollection"/> class.
@@ -18,7 +19,7 @@ namespace CHAI.Models.Collections
         {
             foreach (var bitCondition in Enum.GetValues(typeof(BitsCondition)).Cast<BitsCondition>())
             {
-                Add(bitCondition.GetDescription());
+                Add(new KeyValuePair<string, string>(bitCondition.GetDescription(), bitCondition.ToString()));
             }
         }
     }
