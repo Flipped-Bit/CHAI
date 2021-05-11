@@ -275,7 +275,7 @@ namespace CHAI.Views
         /// <param name="e">Arguments from <see cref="TriggersListSelectionChanged"/> event.</param>
         private void TriggersListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            KeyValue.Text = ((Trigger)TriggersList.SelectedItem).CharAnimTriggerKeyChar;
+            KeyValue.Text = (Trigger)TriggersList.SelectedItem != null ? ((Trigger)TriggersList.SelectedItem).CharAnimTriggerKeyChar : string.Empty;
         }
 
         /// <summary>
