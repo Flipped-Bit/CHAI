@@ -317,5 +317,16 @@ namespace CHAI.Views
         {
             TriggersList.ItemsSource = _context.Triggers.ToList();
         }
+
+        private void ShowRewardNameHelp(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(
+                "Enter the case-sensitive Twitch reward name here. When this reward is redeemed, the trigger will be activated.\n\n" +
+                "As rewards can be redeemed by anyone who has enough points, permission and cooldown options are disabled. Twitch offers inbuilt cooldown functionality under the reward settings.\n\n" +
+                "Keywords can still be entered, in case the reward accepts a text input.",
+                "Reward name",
+                MessageBoxButton.OK,
+                MessageBoxImage.Question);
+        }
     }
 }
