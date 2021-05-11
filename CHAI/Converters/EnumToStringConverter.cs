@@ -1,6 +1,7 @@
-using CHAI.Extensions;
+﻿using CHAI.Extensions;
 using CHAI.Models.Enums;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -28,14 +29,14 @@ namespace CHAI.Converters
 
             if (isBitCondition)
             {
-                return Enum.Parse<BitsCondition>(value.ToString())
-                    .GetDescription();
+                var newEnum = Enum.Parse<BitsCondition>(value.ToString());
+                return new KeyValuePair<string, string>(newEnum.GetDescription(), newEnum.ToString());
             }
 
             if (isCooldownUnit)
             {
-                return Enum.Parse<CooldownUnit>(value.ToString())
-                    .GetDescription();
+                var newEnum = Enum.Parse<CooldownUnit>(value.ToString());
+                return new KeyValuePair<string, string>(newEnum.GetDescription(), newEnum.ToString());
             }
 
             return new NotImplementedException();
@@ -51,7 +52,7 @@ namespace CHAI.Converters
         /// <returns>A <see cref="Enum"/> representation of the <see cref="string"/> value.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var enumValue = value.ToString();
+            var enumValue = ((KeyValuePair<string, string>)value).Value;
 
             switch (targetType.Name)
             {
