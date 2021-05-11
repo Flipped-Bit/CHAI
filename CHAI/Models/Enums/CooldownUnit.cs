@@ -16,19 +16,19 @@ namespace CHAI.Models.Enums
         /// <summary>
         /// Using Second(s) as unit
         /// </summary>
-        [Description("Seconds")]
+        [Description("Second(s)")]
         Seconds,
 
         /// <summary>
         /// Using Minute(s) as unit
         /// </summary>
-        [Description("Minutes")]
+        [Description("Minute(s)")]
         Minutes,
 
         /// <summary>
         /// Using Hour(s) as unit
         /// </summary>
-        [Description("Hours")]
+        [Description("Hour(s)")]
         Hours,
     }
 }
