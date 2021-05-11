@@ -285,5 +285,21 @@ namespace CHAI.Views
         {
             TriggersList.ItemsSource = _context.Triggers.ToList();
         }
+
+        /// <summary>
+        /// Method for deleting a selected <see cref="Trigger"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="DeleteTrigger"/> event.</param>
+        /// <param name="e">Arguments from <see cref="DeleteTrigger"/> event.</param>
+        private void DeleteTrigger(object sender, RoutedEventArgs e)
+        {
+            var selectedTrigger = (Trigger)TriggersList.SelectedItem;
+            if (selectedTrigger != null)
+            {
+                _context.Triggers.Remove(selectedTrigger);
+                _context.SaveChanges();
+                UpdateTriggersList();
+            }
+        }
     }
 }
