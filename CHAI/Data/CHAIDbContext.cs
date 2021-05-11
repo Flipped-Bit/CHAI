@@ -1,4 +1,5 @@
-using CHAI.Models;
+﻿using CHAI.Models;
+using CHAI.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace CHAI.Data
@@ -40,6 +41,10 @@ namespace CHAI.Data
                 .HasConversion<int>();
 
             modelBuilder
+                .Entity<Setting>()
+                .HasData(GetSeededSettings());
+
+            modelBuilder
                 .Entity<Trigger>()
                 .Property(trigger => trigger.BitsCondition)
                 .HasConversion<int>();
@@ -47,6 +52,20 @@ namespace CHAI.Data
             modelBuilder.Entity<Trigger>()
                 .Property(trigger => trigger.CooldownUnit)
                 .HasConversion<int>();
+        }
+
+        private Setting[] GetSeededSettings()
+        {
+            return new Setting[]
+            {
+                new Setting
+                {
+                    Id = 1,
+                    GlobalCooldown = 0,
+                    GlobalCooldownUnit = CooldownUnit.Seconds,
+                    LoggingEnabled = true,
+                },
+            };
         }
     }
 }
