@@ -3,11 +3,11 @@ using CHAI.Extensions;
 using CHAI.Models.Enums;
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using Trigger = CHAI.Models.Trigger;
 
@@ -44,6 +44,7 @@ namespace CHAI.Views
             UpdateTriggersList();
             var window = GetWindow(this);
             window.KeyDown += KeyDown;
+            Closing += MainWindowClosing;
             _logger.LogInformation("Main window initialised successfully");
         }
 
@@ -153,6 +154,21 @@ namespace CHAI.Views
                 KeyValue.Text = ((Trigger)TriggersList.SelectedItem).CharAnimTriggerKeyChar;
                 IsRecordingKey = false;
                 RecordKeyBtn.Content = "Record";
+            }
+        }
+
+
+        /// <summary>
+        /// Method for saving all triggers on close.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="MainWindowClosing"/> event.</param>
+        /// <param name="e">Arguments from <see cref="MainWindowClosing"/> event.</param>
+        private void MainWindowClosing(object sender, CancelEventArgs e)
+        {
+            foreach (Trigger trigger in TriggersList.ItemsSource)
+            {
+                _context.Triggers.Update(trigger);
+                _context.SaveChanges();
             }
         }
 
