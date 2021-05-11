@@ -275,7 +275,7 @@ namespace CHAI.Views
         /// <param name="e">Arguments from <see cref="TriggersListSelectionChanged"/> event.</param>
         private void TriggersListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            KeyValue.Text = ((Trigger)TriggersList.SelectedItem).CharAnimTriggerKeyChar;
+            KeyValue.Text = (Trigger)TriggersList.SelectedItem != null ? ((Trigger)TriggersList.SelectedItem).CharAnimTriggerKeyChar : string.Empty;
         }
 
         /// <summary>
@@ -284,6 +284,22 @@ namespace CHAI.Views
         private void UpdateTriggersList()
         {
             TriggersList.ItemsSource = _context.Triggers.ToList();
+        }
+
+        /// <summary>
+        /// Method for deleting a selected <see cref="Trigger"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="DeleteTrigger"/> event.</param>
+        /// <param name="e">Arguments from <see cref="DeleteTrigger"/> event.</param>
+        private void DeleteTrigger(object sender, RoutedEventArgs e)
+        {
+            var selectedTrigger = (Trigger)TriggersList.SelectedItem;
+            if (selectedTrigger != null)
+            {
+                _context.Triggers.Remove(selectedTrigger);
+                _context.SaveChanges();
+                UpdateTriggersList();
+            }
         }
     }
 }
