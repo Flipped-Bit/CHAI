@@ -1,4 +1,4 @@
-﻿using CHAI.Models;
+using CHAI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CHAI.Data
@@ -19,6 +19,11 @@ namespace CHAI.Data
         }
 
         /// <summary>
+        /// Gets or Sets a <see cref="DbSet{Setting}"/> for storing <see cref="Setting"/> entities.
+        /// </summary>
+        public DbSet<Setting> Settings { get; set; }
+
+        /// <summary>
         /// Gets or Sets a <see cref="DbSet{Trigger}"/> for storing <see cref="Trigger"/> entities.
         /// </summary>
         public DbSet<Trigger> Triggers { get; set; }
@@ -29,6 +34,11 @@ namespace CHAI.Data
         /// <param name="modelBuilder">Builder used to define mapping of entities to database tables.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder
+                .Entity<Setting>()
+                .Property(setting => setting.GlobalCooldownUnit)
+                .HasConversion<int>();
+
             modelBuilder
                 .Entity<Trigger>()
                 .Property(trigger => trigger.BitsCondition)
