@@ -36,6 +36,8 @@ namespace CHAI.Views
         /// </summary>
         private readonly ILogger _settingsWindowLogger;
 
+        private User _currentUser;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsWindow"/> class.
         /// </summary>
@@ -49,6 +51,23 @@ namespace CHAI.Views
             InitializeComponent();
             ActiveProcessMenu.ItemsSource = GetActiveProcesses();
             _settingsWindowLogger.LogInformation("Settings window initialised successfully");
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="CurrentUser"/>.
+        /// </summary>
+        public User CurrentUser
+        {
+            get
+            {
+                return _currentUser;
+            }
+
+            set
+            {
+                _currentUser = value;
+                Username.Text = _currentUser.Username;
+            }
         }
 
         /// <summary>
