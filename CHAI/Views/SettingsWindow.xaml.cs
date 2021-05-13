@@ -1,5 +1,6 @@
 using CHAI.Data;
 using CHAI.Models;
+using CHAI.Models.Enums;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -209,6 +210,26 @@ namespace CHAI.Views
                 "The global cooldown applies to ALL triggers. During this period, none of the triggers can be used.\n\n" +
                 "This is useful for preventing people from spamming multiple different triggers in a short period.",
                 "Global cooldown");
+        }
+
+        private void SaveSettings(object sender, RoutedEventArgs e)
+        {
+            var currentSettings = _context.Settings.FirstOrDefault();
+            if (CurrentProcess != null)
+            {
+                currentSettings.Application = CurrentProcess.ProcessName;
+            }
+
+            if (CurrentUser != null)
+            {
+                currentSettings.OAuthToken = CurrentUser.Token;
+                currentSettings.UserID = CurrentUser.UserId;
+                currentSettings.Username = CurrentUser.Username;
+            }
+
+            _context.Update(currentSettings);
+            _context.SaveChanges();
+            Close();
         }
     }
 }
