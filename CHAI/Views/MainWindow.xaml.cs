@@ -29,6 +29,11 @@ namespace CHAI.Views
         private readonly CHAIDbContext _context;
 
         /// <summary>
+        /// The injected <see cref="ILogger{LoginWindow}"/>.
+        /// </summary>
+        private readonly ILogger _loginWindowLogger;
+
+        /// <summary>
         /// The injected <see cref="ILogger{MainWindow}"/>.
         /// </summary>
         private readonly ILogger _mainWindowlogger;
@@ -41,9 +46,14 @@ namespace CHAI.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
-        public MainWindow(CHAIDbContext context, ILogger<MainWindow> mainLogger, ILogger<SettingsWindow> settingsLogger)
+        public MainWindow(
+            CHAIDbContext context,
+            ILogger<LoginWindow> loginLogger,
+            ILogger<MainWindow> mainLogger,
+            ILogger<SettingsWindow> settingsLogger)
         {
             _context = context;
+            _loginWindowLogger = loginLogger;
             _mainWindowlogger = mainLogger;
             _settingsWindowLogger = settingsLogger;
             InitializeComponent();
@@ -267,7 +277,7 @@ namespace CHAI.Views
             }
             else
             {
-                SettingsWindow = new SettingsWindow(_context, _settingsWindowLogger)
+                SettingsWindow = new SettingsWindow(_context, _loginWindowLogger, _settingsWindowLogger)
                 {
                     Owner = this,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner,

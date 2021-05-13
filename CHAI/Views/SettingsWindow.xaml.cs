@@ -27,22 +27,28 @@ namespace CHAI.Views
         private readonly CHAIDbContext _context;
 
         /// <summary>
-        /// The injected <see cref="ILogger"/>.
+        /// The injected <see cref="ILogger{LoginWindow}"/>.
         /// </summary>
-        private readonly ILogger _logger;
+        private readonly ILogger _loginWindowLogger;
+
+        /// <summary>
+        /// The injected <see cref="ILogger{SettingsWindow}"/>.
+        /// </summary>
+        private readonly ILogger _settingsWindowLogger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsWindow"/> class.
         /// </summary>
-        public SettingsWindow(CHAIDbContext context, ILogger logger)
+        public SettingsWindow(CHAIDbContext context, ILogger loginLogger, ILogger settingsLogger)
         {
             _context = context;
-            _logger = logger;
+            _loginWindowLogger = loginLogger;
+            _settingsWindowLogger = settingsLogger;
             CurrentSettings = _context.Settings.FirstOrDefault();
             this.DataContext = CurrentSettings;
             InitializeComponent();
             ActiveProcessMenu.ItemsSource = GetActiveProcesses();
-            _logger.LogInformation("Settings window initialised successfully");
+            _settingsWindowLogger.LogInformation("Settings window initialised successfully");
         }
 
         /// <summary>
