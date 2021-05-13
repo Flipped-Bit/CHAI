@@ -45,10 +45,19 @@ namespace CHAI.Views
             _logger.LogInformation("Settings window initialised successfully");
         }
 
+        /// <summary>
+        /// Gets or sets the <see cref="CurrentProcess"/>.
+        /// </summary>
         private Process CurrentProcess { get; set; }
 
+        /// <summary>
+        /// Gets or sets the <see cref="CurrentSettings"/>.
+        /// </summary>
         private Setting CurrentSettings { get; set; }
 
+        /// <summary>
+        /// Gets or sets the <see cref="ProcessDictionary"/>.
+        /// </summary>
         private Dictionary<string, Process> ProcessDictionary { get; set; } = new Dictionary<string, Process>();
 
         /// <summary>
