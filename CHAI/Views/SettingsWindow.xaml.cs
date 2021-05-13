@@ -56,6 +56,11 @@ namespace CHAI.Views
         private Setting CurrentSettings { get; set; }
 
         /// <summary>
+        /// Gets or sets the <see cref="LoginWindow"/>.
+        /// </summary>
+        private LoginWindow LoginWindow { get; set; }
+
+        /// <summary>
         /// Gets or sets the <see cref="ProcessDictionary"/>.
         /// </summary>
         private Dictionary<string, Process> ProcessDictionary { get; set; } = new Dictionary<string, Process>();
@@ -122,6 +127,30 @@ namespace CHAI.Views
         {
             CurrentSettings.GlobalCooldown += 1;
             GlobalCooldownValue.Text = Convert.ToString(CurrentSettings.GlobalCooldown);
+        }
+
+        /// <summary>
+        /// Method for logging into Twitch API.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="Login"/> event.</param>
+        /// <param name="e">Arguments from <see cref="Login"/> event.</param>
+        private void Login(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current.Windows.OfType<LoginWindow>().Any())
+            {
+                Application.Current.Windows.OfType<LoginWindow>()
+                    .FirstOrDefault()
+                    .Activate();
+            }
+            else
+            {
+                LoginWindow = new LoginWindow(_loginWindowLogger)
+                {
+                    Owner = this,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                LoginWindow.Show();
+            }
         }
 
         /// <summary>
