@@ -27,28 +27,67 @@ namespace CHAI.Views
         private readonly CHAIDbContext _context;
 
         /// <summary>
-        /// The injected <see cref="ILogger"/>.
+        /// The injected <see cref="ILogger{LoginWindow}"/>.
         /// </summary>
-        private readonly ILogger _logger;
+        private readonly ILogger _loginWindowLogger;
+
+        /// <summary>
+        /// The injected <see cref="ILogger{SettingsWindow}"/>.
+        /// </summary>
+        private readonly ILogger _settingsWindowLogger;
+
+        private User _currentUser;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsWindow"/> class.
         /// </summary>
-        public SettingsWindow(CHAIDbContext context, ILogger logger)
+        public SettingsWindow(CHAIDbContext context, ILogger loginLogger, ILogger settingsLogger)
         {
             _context = context;
-            _logger = logger;
+            _loginWindowLogger = loginLogger;
+            _settingsWindowLogger = settingsLogger;
             CurrentSettings = _context.Settings.FirstOrDefault();
             this.DataContext = CurrentSettings;
             InitializeComponent();
             ActiveProcessMenu.ItemsSource = GetActiveProcesses();
-            _logger.LogInformation("Settings window initialised successfully");
+            _settingsWindowLogger.LogInformation("Settings window initialised successfully");
         }
 
+        /// <summary>
+        /// Gets or sets the <see cref="CurrentUser"/>.
+        /// </summary>
+        public User CurrentUser
+        {
+            get
+            {
+                return _currentUser;
+            }
+
+            set
+            {
+                _currentUser = value;
+                Username.Text = _currentUser.Username;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="CurrentProcess"/>.
+        /// </summary>
         private Process CurrentProcess { get; set; }
 
+        /// <summary>
+        /// Gets or sets the <see cref="CurrentSettings"/>.
+        /// </summary>
         private Setting CurrentSettings { get; set; }
 
+        /// <summary>
+        /// Gets or sets the <see cref="LoginWindow"/>.
+        /// </summary>
+        private LoginWindow LoginWindow { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="ProcessDictionary"/>.
+        /// </summary>
         private Dictionary<string, Process> ProcessDictionary { get; set; } = new Dictionary<string, Process>();
 
         /// <summary>
@@ -113,6 +152,30 @@ namespace CHAI.Views
         {
             CurrentSettings.GlobalCooldown += 1;
             GlobalCooldownValue.Text = Convert.ToString(CurrentSettings.GlobalCooldown);
+        }
+
+        /// <summary>
+        /// Method for logging into Twitch API.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="Login"/> event.</param>
+        /// <param name="e">Arguments from <see cref="Login"/> event.</param>
+        private void Login(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current.Windows.OfType<LoginWindow>().Any())
+            {
+                Application.Current.Windows.OfType<LoginWindow>()
+                    .FirstOrDefault()
+                    .Activate();
+            }
+            else
+            {
+                LoginWindow = new LoginWindow(_loginWindowLogger)
+                {
+                    Owner = this,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                LoginWindow.Show();
+            }
         }
 
         /// <summary>
