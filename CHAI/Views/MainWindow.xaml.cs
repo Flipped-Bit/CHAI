@@ -1,14 +1,17 @@
 using CHAI.Data;
 using CHAI.Extensions;
+using CHAI.Models;
 using CHAI.Models.Enums;
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using Trigger = CHAI.Models.Trigger;
 
 namespace CHAI.Views
@@ -57,6 +60,7 @@ namespace CHAI.Views
             _mainWindowlogger = mainLogger;
             _settingsWindowLogger = settingsLogger;
             InitializeComponent();
+            RefreshConnectedApplication();
             UpdateTriggersList();
             var window = GetWindow(this);
             window.KeyDown += KeyDown;
@@ -70,9 +74,50 @@ namespace CHAI.Views
         public SettingsWindow SettingsWindow { get; set; }
 
         /// <summary>
+        /// Gets or sets the selected <see cref="Setting"/>.
+        /// </summary>
+        public Setting Settings { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the selected <see cref="Process"/> is active.
+        /// </summary>
+        private bool HasActiveProcess { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether Key presses are being recorded.
         /// </summary>
         private bool IsRecordingKey { get; set; }
+
+        /// <summary>
+        /// Method for refreshing Connected <see cref="Process"/>.
+        /// </summary>
+        public void RefreshConnectedApplication()
+        {
+            Settings = _context.Settings.FirstOrDefault();
+            if (Settings != null)
+            {
+                HasActiveProcess = ProcessManager.ProcessRunning(Settings.Application);
+            }
+
+            if (HasActiveProcess)
+            {
+                ApplicationConnectionState.Text = $"{Settings.Application} Connected!";
+                ApplicationConnectionState.Foreground = Brushes.Green;
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(Settings.Application))
+                {
+                    ApplicationConnectionState.Text = "Set Application in Settings";
+                }
+                else
+                {
+                    ApplicationConnectionState.Text = $"{Settings.Application} not found!";
+                }
+
+                ApplicationConnectionState.Foreground = Brushes.Red;
+            }
+        }
 
         /// <summary>
         /// Method for adding a <see cref="Keyword"/> to <see cref="Keywords"/>.
@@ -371,6 +416,16 @@ namespace CHAI.Views
                 "Reward name",
                 MessageBoxButton.OK,
                 MessageBoxImage.Question);
+        }
+
+        /// <summary>
+        /// Method for triggering refresh of connection to <see cref="Process"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="RefreshConnection"/> event.</param>
+        /// <param name="e">Arguments from <see cref="RefreshConnection"/> event.</param>
+        private void RefreshConnection(object sender, RoutedEventArgs e)
+        {
+            RefreshConnectedApplication();
         }
     }
 }

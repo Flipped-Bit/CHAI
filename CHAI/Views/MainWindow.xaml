@@ -135,6 +135,8 @@
                 </Grid>
             </TabItem>
         </TabControl>
+        <Button Name="RefreshConnectedApplicationBtn" Grid.Column="5" Grid.Row="3" Click="RefreshConnection" Content="Refresh"/>
+        <TextBlock Name="ApplicationConnectionState" Grid.Column="6" Grid.Row="3" Margin="6,7,10,10" Text="" VerticalAlignment="Center" FontSize="10"></TextBlock>
         <Button Name="OpenSettings" Grid.Column="10" Grid.Row="3" Content="Settings" Click="OpenSettingsMenu"/>
     </Grid>
 </Window>

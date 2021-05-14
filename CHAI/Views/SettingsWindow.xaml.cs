@@ -215,10 +215,7 @@ namespace CHAI.Views
         private void SaveSettings(object sender, RoutedEventArgs e)
         {
             var currentSettings = _context.Settings.FirstOrDefault();
-            if (CurrentProcess != null)
-            {
-                currentSettings.Application = CurrentProcess.ProcessName;
-            }
+            currentSettings.Application = CurrentProcess != null ? CurrentProcess.ProcessName : string.Empty;
 
             if (CurrentUser != null)
             {
@@ -229,6 +226,7 @@ namespace CHAI.Views
 
             _context.Update(currentSettings);
             _context.SaveChanges();
+            ((MainWindow)Owner).RefreshConnectedApplication();
             Close();
         }
     }
