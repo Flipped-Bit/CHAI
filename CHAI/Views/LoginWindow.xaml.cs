@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
-using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using System.Web;
@@ -117,11 +116,11 @@ namespace CHAI.Views
             {
                 var result = ex.Response.GetResponseStream()
                     .ReadToEnd();
-                Debug.WriteLine(result);
+                _loginWindowLogger.LogError(result);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                _loginWindowLogger.LogError(ex.Message);
             }
 
             return user;
