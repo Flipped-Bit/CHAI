@@ -60,6 +60,11 @@ namespace CHAI.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
+        /// <param name="context">The injected <see cref="CHAIDbContext"/>.</param>
+        /// <param name="ircLogger">The injected <see cref="ILogger"/> for <see cref="IrcClient"/>.</param>
+        /// <param name="loginLogger">The injected <see cref="ILogger"/> for <see cref="LoginWindow"/>.</param>
+        /// <param name="mainLogger">The injected <see cref="ILogger"/>.</param>
+        /// <param name="settingsLogger">The injected <see cref="ILogger"/> for <see cref="SettingsWindow"/>.</param>
         public MainWindow(
             CHAIDbContext context,
             ILogger<IrcService> ircLogger,

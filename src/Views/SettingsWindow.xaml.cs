@@ -42,6 +42,9 @@ namespace CHAI.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsWindow"/> class.
         /// </summary>
+        /// <param name="context">The injected <see cref="CHAIDbContext"/>.</param>
+        /// <param name="loginLogger">The injected <see cref="ILogger"/> for <see cref="LoginWindow"/>.</param>
+        /// <param name="settingsLogger">The injected <see cref="ILogger"/>.</param>
         public SettingsWindow(CHAIDbContext context, ILogger loginLogger, ILogger settingsLogger)
         {
             _context = context;
