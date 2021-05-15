@@ -4,7 +4,9 @@ using CHAI.Models;
 using CHAI.Models.Enums;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -26,10 +28,19 @@ namespace CHAI.Views
         /// </summary>
         private const string NUMBERONLYREGEX = @"^\d+$";
 
+        private static readonly NameValueCollection ClientData = (NameValueCollection)ConfigurationManager.GetSection("AppSettings/clientData");
+
+        private static readonly NameValueCollection Endpoints = (NameValueCollection)ConfigurationManager.GetSection("AppSettings/endpoints");
+
         /// <summary>
         /// The injected <see cref="CHAIDbContext"/>.
         /// </summary>
         private readonly CHAIDbContext _context;
+
+        /// <summary>
+        /// The injected <see cref="ILogger{IrcService}"/>.
+        /// </summary>
+        private readonly ILogger _ircLogger;
 
         /// <summary>
         /// The injected <see cref="ILogger{LoginWindow}"/>.
@@ -51,16 +62,19 @@ namespace CHAI.Views
         /// </summary>
         public MainWindow(
             CHAIDbContext context,
+            ILogger<IrcService> ircLogger,
             ILogger<LoginWindow> loginLogger,
             ILogger<MainWindow> mainLogger,
             ILogger<SettingsWindow> settingsLogger)
         {
             _context = context;
+            _ircLogger = ircLogger;
             _loginWindowLogger = loginLogger;
             _mainWindowlogger = mainLogger;
             _settingsWindowLogger = settingsLogger;
             InitializeComponent();
             RefreshConnectedApplication();
+            RefreshIRC();
             UpdateTriggersList();
             var window = GetWindow(this);
             window.KeyDown += KeyDown;
@@ -69,14 +83,19 @@ namespace CHAI.Views
         }
 
         /// <summary>
-        /// Gets or sets a <see cref="SettingsWindow"/> child for the <see cref="MainWindow"/>.
+        /// Gets or sets a <see cref="IrcClient"/> for the <see cref="MainWindow"/>.
         /// </summary>
-        public SettingsWindow SettingsWindow { get; set; }
+        public IrcClient IrcClient { get; set; }
 
         /// <summary>
         /// Gets or sets the selected <see cref="Setting"/>.
         /// </summary>
         public Setting Settings { get; set; }
+
+        /// <summary>
+        /// Gets or sets a <see cref="SettingsWindow"/> child for the <see cref="MainWindow"/>.
+        /// </summary>
+        public SettingsWindow SettingsWindow { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the selected <see cref="Process"/> is active.
@@ -116,6 +135,25 @@ namespace CHAI.Views
                 }
 
                 ApplicationConnectionState.Foreground = Brushes.Red;
+            }
+        }
+
+        /// <summary>
+        /// Method for refreshing conection to IRC.
+        /// </summary>
+        public void RefreshIRC()
+        {
+            CreateIRCClient(Settings.Username.ToLower());
+            if (IrcClient != null)
+            {
+                StartIRCConnection();
+                ChatConnectedState.Text = "Chat connected";
+                ChatConnectedState.Foreground = Brushes.Green;
+            }
+            else
+            {
+                ChatConnectedState.Text = "Chat disconnected";
+                ChatConnectedState.Foreground = Brushes.Red;
             }
         }
 
@@ -168,6 +206,25 @@ namespace CHAI.Views
         {
             ((Trigger)TriggersList.SelectedItem).Cooldown += 1;
             CooldownValue.Text = Convert.ToString(((Trigger)TriggersList.SelectedItem).Cooldown);
+        }
+
+        private void CreateIRCClient(string channelName)
+        {
+            var ip = Endpoints.Get("IP").Split(':')[0];
+            var port = Convert.ToInt32(Endpoints.Get("IP").Split(':')[1]);
+            var username = Settings != null ? Settings.Username.ToLower() : string.Empty;
+            var oauth = ClientData.Get("OAuth");
+
+            if (!string.IsNullOrWhiteSpace(username))
+            {
+                IrcClient = new IrcClient(
+                    _ircLogger,
+                    ip,
+                    port,
+                    username,
+                    oauth,
+                    channelName);
+            }
         }
 
         /// <summary>
@@ -343,6 +400,16 @@ namespace CHAI.Views
         }
 
         /// <summary>
+        /// Method for triggering refresh of connection to <see cref="Process"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="RefreshConnection"/> event.</param>
+        /// <param name="e">Arguments from <see cref="RefreshConnection"/> event.</param>
+        private void RefreshConnection(object sender, RoutedEventArgs e)
+        {
+            RefreshConnectedApplication();
+        }
+
+        /// <summary>
         /// Method for removing a <see cref="Keyword"/> from <see cref="Keywords"/>.
         /// </summary>
         /// <param name="sender">The sender of <see cref="RemoveKeywordBtnClick"/> event.</param>
@@ -389,6 +456,31 @@ namespace CHAI.Views
             HasUnsavedChanges.Text = "Changes Saved";
         }
 
+        private void ShowRewardNameHelp(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(
+                "Enter the case-sensitive Twitch reward name here. When this reward is redeemed, the trigger will be activated.\n\n" +
+                "As rewards can be redeemed by anyone who has enough points, permission and cooldown options are disabled. Twitch offers inbuilt cooldown functionality under the reward settings.\n\n" +
+                "Keywords can still be entered, in case the reward accepts a text input.",
+                "Reward name",
+                MessageBoxButton.OK,
+                MessageBoxImage.Question);
+        }
+
+        private void StartIRCConnection()
+        {
+            // Ping to the server to make sure the bot stays connected
+            PingSender ping = new PingSender(_ircLogger, IrcClient);
+            ping.Start();
+
+            var triggers = _context.Triggers.ToList();
+
+            // Listen to the chat
+            ChatListener chatListener = new ChatListener(_ircLogger, Settings, triggers, IrcClient, Settings.Username.ToLower());
+            chatListener.Start();
+            chatListener.StartLogging();
+        }
+
         /// <summary>
         /// Method for Updating <see cref="KeyValue"/>.
         /// </summary>
@@ -405,27 +497,6 @@ namespace CHAI.Views
         private void UpdateTriggersList()
         {
             TriggersList.ItemsSource = _context.Triggers.ToList();
-        }
-
-        private void ShowRewardNameHelp(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(
-                "Enter the case-sensitive Twitch reward name here. When this reward is redeemed, the trigger will be activated.\n\n" +
-                "As rewards can be redeemed by anyone who has enough points, permission and cooldown options are disabled. Twitch offers inbuilt cooldown functionality under the reward settings.\n\n" +
-                "Keywords can still be entered, in case the reward accepts a text input.",
-                "Reward name",
-                MessageBoxButton.OK,
-                MessageBoxImage.Question);
-        }
-
-        /// <summary>
-        /// Method for triggering refresh of connection to <see cref="Process"/>.
-        /// </summary>
-        /// <param name="sender">The sender of <see cref="RefreshConnection"/> event.</param>
-        /// <param name="e">Arguments from <see cref="RefreshConnection"/> event.</param>
-        private void RefreshConnection(object sender, RoutedEventArgs e)
-        {
-            RefreshConnectedApplication();
         }
     }
 }

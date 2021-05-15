@@ -227,6 +227,7 @@ namespace CHAI.Views
             _context.Update(currentSettings);
             _context.SaveChanges();
             ((MainWindow)Owner).RefreshConnectedApplication();
+            ((MainWindow)Owner).RefreshIRC();
             Close();
         }
     }
