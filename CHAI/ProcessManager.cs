@@ -8,7 +8,7 @@ namespace CHAI
     public static class ProcessManager
     {
         /// <summary>
-        /// Method for checking if seleceted <see cref="Process"/> is running.
+        /// Method for checking if selected <see cref="Process"/> is running.
         /// </summary>
         /// <param name="processName"><see cref="Process"/> to check.</param>
         /// <returns>A boolean value indicating whether <see cref="Process"/> is running.</returns>
