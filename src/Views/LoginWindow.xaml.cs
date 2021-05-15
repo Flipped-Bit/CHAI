@@ -30,6 +30,7 @@ namespace CHAI.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="LoginWindow"/> class.
         /// </summary>
+        /// <param name="logger">The injected <see cref="ILogger"/>.</param>
         public LoginWindow(ILogger logger)
         {
             _loginWindowLogger = logger;
