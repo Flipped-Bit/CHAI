@@ -35,13 +35,13 @@ namespace CHAI
 
             services.AddDbContext<CHAIDbContext>(options =>
             {
-                options.UseSqlite("Data Source = CHAI.db");
+                options.UseSqlite($"Data Source = {Path.Join(APPDATAFOLDER, "CHAI", "CHAI.db")}");
             });
 
             // Added Serilog
             var serilogLogger = new LoggerConfiguration()
             .WriteTo.File(
-                Path.Join(APPDATAFOLDER, "CHAI", $"{DateTime.Now:dd-MM-yyyy}.log"),
+                Path.Join(APPDATAFOLDER, "CHAI", "Logs", $"{DateTime.Now:dd-MM-yyyy}.log"),
                 LogEventLevel.Warning,
                 outputTemplate: "[{SourceContext}] {Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
             .WriteTo.Debug()
