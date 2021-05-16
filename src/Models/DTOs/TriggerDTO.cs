@@ -2,141 +2,121 @@
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 namespace CHAI.Models
 {
     /// <summary>
-    /// Model representing a <see cref="Trigger"/>.
+    /// Model representing a <see cref="Trigger"/> data transfer object.
     /// </summary>
-    public class Trigger
+    public class TriggerDTO
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Trigger"/> class.
+        /// Initializes a new instance of the <see cref="TriggerDTO"/> class.
         /// </summary>
-        public Trigger()
+        public TriggerDTO()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Trigger"/> class from a <see cref="TriggerDTO"/>.
+        /// Initializes a new instance of the <see cref="TriggerDTO"/> class from a <see cref="Trigger"/>.
         /// </summary>
-        /// <param name="triggerDTO"><see cref="TriggerDTO"/> to construct from.</param>
-        public Trigger(TriggerDTO triggerDTO)
+        /// <param name="trigger"><see cref="Trigger"/> to construct from.</param>
+        public TriggerDTO(Trigger trigger)
         {
-            Name = triggerDTO.Name;
-            CreatedAt = triggerDTO.CreatedAt;
-            BitsEnabled = triggerDTO.BitsEnabled;
-            BitsCondition = (BitsCondition)triggerDTO.BitsCondition + 1;
-            MinimumBits = triggerDTO.BitsAmount;
-            MaximumBits = triggerDTO.BitsAmount2;
-            UserLevelEveryone = triggerDTO.UserLevelEveryone;
-            UserLevelSubs = triggerDTO.UserLevelSubs;
-            UserLevelVips = triggerDTO.UserLevelVips;
-            UserLevelMods = triggerDTO.UserLevelMods;
-            Keywords = string.Join(',', JsonConvert.DeserializeObject<string[]>(triggerDTO.Keywords));
-            CharAnimTriggerKeyChar = triggerDTO.CharAnimTriggerKeyChar;
-            CharAnimTriggerKeyValue = triggerDTO.CharAnimTriggerKeyValue;
-            Cooldown = triggerDTO.Cooldown;
-            CooldownUnit = (CooldownUnit)triggerDTO.CooldownUnit + 1;
-            LastTriggered = triggerDTO.LastTriggered;
-            RewardName = triggerDTO.RewardName;
+            Name = trigger.Name;
+            CreatedAt = trigger.CreatedAt;
+            BitsEnabled = trigger.BitsEnabled;
+            BitsCondition = (int)trigger.BitsCondition - 1;
+            BitsAmount = trigger.MinimumBits;
+            BitsAmount2 = trigger.MaximumBits;
+            UserLevelEveryone = trigger.UserLevelEveryone;
+            UserLevelSubs = trigger.UserLevelSubs;
+            UserLevelVips = trigger.UserLevelVips;
+            UserLevelMods = trigger.UserLevelMods;
+            Keywords = JsonConvert.SerializeObject(trigger.Keywords.Split(',', StringSplitOptions.RemoveEmptyEntries));
+            CharAnimTriggerKeyChar = trigger.CharAnimTriggerKeyChar;
+            CharAnimTriggerKeyValue = trigger.CharAnimTriggerKeyValue;
+            Cooldown = trigger.Cooldown;
+            CooldownUnit = (int)trigger.CooldownUnit - 1;
+            LastTriggered = trigger.LastTriggered;
+            RewardName = trigger.RewardName ?? string.Empty;
         }
-
-        /// <summary>
-        /// Gets or sets the <see cref="Id"/> that uniquely identifies this <see cref="Trigger" /> instance.
-        /// </summary>
-        public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="Name"/> of this <see cref="Trigger" /> instance.
         /// </summary>
-        [MaxLength]
-        [Required]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="DateTime"/> that this <see cref="Trigger" /> instance was <see cref="CreatedAt"/>.
         /// </summary>
-        [Required]
         public DateTime CreatedAt { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="Trigger" /> instance has <see cref="BitsEnabled"/>.
         /// </summary>
-        [Required]
         public bool BitsEnabled { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the <see cref="BitsCondition"/> for this <see cref="Trigger" /> instance.
         /// </summary>
-        [Required]
-        public BitsCondition BitsCondition { get; set; }
+        public int BitsCondition { get; set; }
 
         /// <summary>
-        /// Gets or Sets the <see cref="MinimumBits"/> required to trigger this <see cref="Trigger"/> instance.
+        /// Gets or Sets the <see cref="BitsAmount"/> required to trigger this <see cref="Trigger"/> instance.
         /// </summary>
-        [Required]
-        public int MinimumBits { get; set; }
+        public int BitsAmount { get; set; }
 
         /// <summary>
-        /// Gets or Sets the <see cref="MinimumBits"/> required to trigger this <see cref="Trigger"/> instance.
+        /// Gets or Sets the <see cref="BitsAmount2"/> required to trigger this <see cref="Trigger"/> instance.
         /// </summary>
-        [Required]
-        public int MaximumBits { get; set; }
+        public int BitsAmount2 { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="Trigger" /> instance can be triggered by Evewryone.
         /// </summary>
-        [Required]
         public bool UserLevelEveryone { get; set; } = false;
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="Trigger" /> instance can be triggered by Subscribers.
         /// </summary>
-        [Required]
         public bool UserLevelSubs { get; set; } = false;
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="Trigger" /> instance can be triggered by VIPs.
         /// </summary>
-        [Required]
         public bool UserLevelVips { get; set; } = false;
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="Trigger" /> instance can be triggered by Mods.
         /// </summary>
-        [Required]
         public bool UserLevelMods { get; set; } = false;
 
         /// <summary>
         /// Gets or Sets the <see cref="Keywords"/> for this <see cref="Trigger"/> instance.
         /// </summary>
-        [Required]
         public string Keywords { get; set; }
 
         /// <summary>
         /// Gets or Sets the character of the <see cref="KeyCode"/> for this <see cref="Trigger"/> instance.
         /// </summary>
-        [Required]
         public string CharAnimTriggerKeyChar { get; set; }
 
         /// <summary>
         /// Gets or Sets the value of the <see cref="KeyCode"/> for this <see cref="Trigger"/> instance.
         /// </summary>
-        [Required]
         public int CharAnimTriggerKeyValue { get; set; }
 
         /// <summary>
         /// Gets or Sets the <see cref="Cooldown"/> interval for this <see cref="Trigger"/> instance.
         /// </summary>
-        [Required]
         public int Cooldown { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="CooldownUnit"/> for this <see cref="Trigger" /> instance.
         /// </summary>
-        [Required]
-        public CooldownUnit CooldownUnit { get; set; }
+        public int CooldownUnit { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="DateTime"/> that this <see cref="Trigger" /> instance was <see cref="LastTriggered"/>.
@@ -146,7 +126,6 @@ namespace CHAI.Models
         /// <summary>
         /// Gets or sets the <see cref="RewardName"/> used to trigger this <see cref="Trigger" /> instance.
         /// </summary>
-        [MaxLength(45)]
         public string RewardName { get; set; }
     }
 }
