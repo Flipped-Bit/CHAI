@@ -111,6 +111,32 @@ namespace CHAI.Views
         }
 
         /// <summary>
+        /// Method to Export <see cref="Trigger"/>s to a file.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="ExportTriggers"/> event.</param>
+        /// <param name="e">Arguments from <see cref="ExportTriggers"/> event.</param>
+        private void ExportTriggers(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog exportDialog = new SaveFileDialog()
+            {
+                Filter = "JSON file (*.json)|*.json",
+            };
+
+            var triggers = _context.Triggers
+                .Select(t => new TriggerDTO(t))
+                .ToArray();
+
+            string triggersAsJson = JsonConvert.SerializeObject(triggers, Formatting.Indented);
+
+            bool? result = exportDialog.ShowDialog();
+
+            if (exportDialog.ShowDialog() == true)
+            {
+                File.WriteAllText(exportDialog.FileName, triggersAsJson);
+            }
+        }
+
+        /// <summary>
         /// Method for getting the active <see cref="Process"/>es.
         /// </summary>
         /// <returns>List of active <see cref="Process"/>es.</returns>
@@ -164,6 +190,46 @@ namespace CHAI.Views
         }
 
         /// <summary>
+        /// Method to Import <see cref="Trigger"/>s from a file.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="ImportTriggers"/> event.</param>
+        /// <param name="e">Arguments from <see cref="ImportTriggers"/> event.</param>
+        private void ImportTriggers(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog browseDialog = new OpenFileDialog()
+            {
+                Filter = "JSON file (*.json)|*.json",
+            };
+
+            var data = string.Empty;
+            if (browseDialog.ShowDialog() == true)
+            {
+                data = File.ReadAllText(browseDialog.FileName);
+            }
+
+            if (!string.IsNullOrWhiteSpace(data))
+            {
+                List<TriggerDTO> triggerDTOs = JsonConvert.DeserializeObject<List<TriggerDTO>>(data);
+                var triggers = triggerDTOs.Select(t => new Trigger(t));
+                string replaceTriggers = ShowImportConfirmation();
+
+                if (replaceTriggers == "Yes" || replaceTriggers == "No")
+                {
+                    if (replaceTriggers == "Yes")
+                    {
+                        _context.Triggers.Clear();
+                        _context.SaveChanges();
+                    }
+
+                    _context.Triggers.AddRange(triggers);
+                    _context.SaveChanges();
+
+                    ((MainWindow)Owner).UpdateTriggersList();
+                }
+            }
+        }
+
+        /// <summary>
         /// Method for logging into Twitch API.
         /// </summary>
         /// <param name="sender">The sender of <see cref="Login"/> event.</param>
@@ -207,19 +273,6 @@ namespace CHAI.Views
             CurrentSettings.GlobalCooldown = 30;
         }
 
-        /// <summary>
-        /// Method for showing help info for Global Cooldown.
-        /// </summary>
-        /// <param name="sender">The sender of <see cref="ShowGlobalCooldownHelp"/> event.</param>
-        /// <param name="e">Arguments from <see cref="ShowGlobalCooldownHelp"/> event.</param>
-        private void ShowGlobalCooldownHelp(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(
-                "The global cooldown applies to ALL triggers. During this period, none of the triggers can be used.\n\n" +
-                "This is useful for preventing people from spamming multiple different triggers in a short period.",
-                "Global cooldown");
-        }
-
         private void SaveSettings(object sender, RoutedEventArgs e)
         {
             var currentSettings = _context.Settings.FirstOrDefault();
@@ -240,71 +293,17 @@ namespace CHAI.Views
         }
 
         /// <summary>
-        /// Method to Export <see cref="Trigger"/>s to a file.
+        /// Method for showing help info for Global Cooldown.
         /// </summary>
-        /// <param name="sender">The sender of <see cref="ExportTriggers"/> event.</param>
-        /// <param name="e">Arguments from <see cref="ExportTriggers"/> event.</param>
-        private void ExportTriggers(object sender, RoutedEventArgs e)
+        /// <param name="sender">The sender of <see cref="ShowGlobalCooldownHelp"/> event.</param>
+        /// <param name="e">Arguments from <see cref="ShowGlobalCooldownHelp"/> event.</param>
+        private void ShowGlobalCooldownHelp(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog exportDialog = new SaveFileDialog()
-            {
-                Filter = "JSON file (*.json)|*.json",
-            };
-
-            var triggers = _context.Triggers
-                .Select(t => new TriggerDTO(t))
-                .ToArray();
-
-            string triggersAsJson = JsonConvert.SerializeObject(triggers, Formatting.Indented);
-
-            bool? result = exportDialog.ShowDialog();
-
-            if (exportDialog.ShowDialog() == true)
-            {
-                File.WriteAllText(exportDialog.FileName, triggersAsJson);
-            }
+            MessageBox.Show(
+                "The global cooldown applies to ALL triggers. During this period, none of the triggers can be used.\n\n" +
+                "This is useful for preventing people from spamming multiple different triggers in a short period.",
+                "Global cooldown");
         }
-
-        /// <summary>
-        /// Method to Import <see cref="Trigger"/>s from a file.
-        /// </summary>
-        /// <param name="sender">The sender of <see cref="ImportTriggers"/> event.</param>
-        /// <param name="e">Arguments from <see cref="ImportTriggers"/> event.</param>
-        private void ImportTriggers(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog browseDialog = new OpenFileDialog()
-            {
-                Filter = "JSON file (*.json)|*.json",
-            };
-
-            var data = string.Empty;
-            if (browseDialog.ShowDialog() == true)
-            {
-                data = File.ReadAllText(browseDialog.FileName);
-            }
-
-            if (!string.IsNullOrWhiteSpace(data))
-            {
-                List<TriggerDTO> triggerDTOs = JsonConvert.DeserializeObject<List<TriggerDTO>>(data);
-                var triggers = triggerDTOs.Select(t => new Trigger(t));
-                string replaceTriggers = ShowImportConfirmation();
-
-                if (replaceTriggers == "Yes" || replaceTriggers == "No")
-                {
-                    if (replaceTriggers == "Yes")
-                    {
-                        _context.Triggers.Clear();
-                        _context.SaveChanges();
-                    }
-
-                    _context.Triggers.AddRange(triggers);
-                    _context.SaveChanges();
-
-                    ((MainWindow)Owner).UpdateTriggersList();
-                }
-            }
-        }
-
         private string ShowImportConfirmation()
         {
             var dialogResult = MessageBox.Show(

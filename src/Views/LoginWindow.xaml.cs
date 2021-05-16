@@ -41,16 +41,6 @@ namespace CHAI.Views
         }
 
         /// <summary>
-        /// Method for setting up events once <see cref="Browser"/> is initialised.
-        /// </summary>
-        /// <param name="sender">The sender of <see cref="BrowserInitializationCompleted"/> event.</param>
-        /// <param name="e">Arguments from <see cref="BrowserInitializationCompleted"/> event.</param>am>
-        private void BrowserInitializationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs e)
-        {
-            Browser.CoreWebView2.DocumentTitleChanged += Browser_TitleChanged;
-        }
-
-        /// <summary>
         /// Method for getting Token from redirect Url.
         /// </summary>
         /// <param name="sender">The sender of <see cref="Browser_TitleChanged"/> event.</param>
@@ -68,6 +58,15 @@ namespace CHAI.Views
             }
         }
 
+        /// <summary>
+        /// Method for setting up events once <see cref="Browser"/> is initialised.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="BrowserInitializationCompleted"/> event.</param>
+        /// <param name="e">Arguments from <see cref="BrowserInitializationCompleted"/> event.</param>am>
+        private void BrowserInitializationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs e)
+        {
+            Browser.CoreWebView2.DocumentTitleChanged += Browser_TitleChanged;
+        }
         /// <summary>
         /// Method for creating OAuth request Url.
         /// </summary>
