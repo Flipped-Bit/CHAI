@@ -148,18 +148,23 @@ namespace CHAI.Views
         /// </summary>
         public void RefreshIRC()
         {
-            CreateIRCClient(Settings.Username.ToLower());
-            if (IrcClient != null)
+            if (!string.IsNullOrWhiteSpace(Settings.Username))
             {
-                StartIRCConnection();
-                ChatConnectedState.Text = "Chat connected";
-                ChatConnectedState.Foreground = Brushes.Green;
+                CreateIRCClient(Settings.Username.ToLower());
+                if (IrcClient != null)
+                {
+                    StartIRCConnection();
+                    ChatConnectedState.Text = "Chat connected";
+                    ChatConnectedState.Foreground = Brushes.Green;
+                }
+                else
+                {
+                    ChatConnectedState.Text = "Chat disconnected";
+                    ChatConnectedState.Foreground = Brushes.Red;
+                }
             }
-            else
-            {
-                ChatConnectedState.Text = "Chat disconnected";
-                ChatConnectedState.Foreground = Brushes.Red;
-            }
+            ChatConnectedState.Text = "Chat disconnected";
+            ChatConnectedState.Foreground = Brushes.Red;
         }
 
         /// <summary>
