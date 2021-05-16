@@ -62,6 +62,9 @@
 
         <CheckBox Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="7" Margin="5,2,2,2" Content="Log successful triggers" FontSize="14" IsChecked="{Binding Path=LoggingEnabled}"></CheckBox>
 
+        <Button Name="ExportTriggersBtn" Grid.Column="1" Grid.Row="9" Content="Export" Click="ExportTriggers"></Button>
+        <Button Name="ImportTriggersBtn" Grid.Column="3" Grid.Row="9" Content="Import" Click="ImportTriggers"></Button>
+        
         <Button Name="SaveSettingsBtn" Grid.Column="8" Grid.ColumnSpan="3" Grid.Row="8" Grid.RowSpan="2" Margin="0,7,0,0" Content="Save" Click="SaveSettings"></Button>
     </Grid>
 </Window>

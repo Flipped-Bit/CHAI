@@ -169,6 +169,14 @@ namespace CHAI.Views
         }
 
         /// <summary>
+        /// Method for updating the <see cref="TriggersList"/> with all <see cref="Trigger"/>s.
+        /// </summary>
+        public void UpdateTriggersList()
+        {
+            TriggersList.ItemsSource = _context.Triggers.ToList();
+        }
+
+        /// <summary>
         /// Method for adding a <see cref="Keyword"/> to <see cref="Keywords"/>.
         /// </summary>
         /// <param name="sender">The sender of <see cref="AddKeywordBtnClick"/> event.</param>
@@ -248,9 +256,11 @@ namespace CHAI.Views
             var newTrigger = new Trigger()
             {
                 Name = $"Trigger {TriggersList.Items.Count + 1}",
+                CreatedAt = DateTime.Now,
                 Keywords = string.Empty,
                 CharAnimTriggerKeyChar = string.Empty,
                 CharAnimTriggerKeyValue = 0,
+                RewardName = string.Empty,
             };
             _context.Triggers.Add(newTrigger);
             _context.SaveChanges();
@@ -454,17 +464,20 @@ namespace CHAI.Views
         private void SaveChangesBtnClick(object sender, RoutedEventArgs e)
         {
             var newTrigger = (Trigger)TriggersList.SelectedItem;
-            if (_context.Triggers.Any(t => t.Id == newTrigger.Id))
+            if (newTrigger != null)
             {
-                _context.Update(newTrigger);
-            }
-            else
-            {
-                _context.Add(newTrigger);
-            }
+                if (_context.Triggers.Any(t => t.Id == newTrigger.Id))
+                {
+                    _context.Update(newTrigger);
+                }
+                else
+                {
+                    _context.Add(newTrigger);
+                }
 
-            _context.SaveChanges();
-            HasUnsavedChanges.Text = "Changes Saved";
+                _context.SaveChanges();
+                HasUnsavedChanges.Text = "Changes Saved";
+            }
         }
 
         private void ShowRewardNameHelp(object sender, RoutedEventArgs e)
@@ -500,14 +513,6 @@ namespace CHAI.Views
         private void TriggersListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             KeyValue.Text = (Trigger)TriggersList.SelectedItem != null ? ((Trigger)TriggersList.SelectedItem).CharAnimTriggerKeyChar : string.Empty;
-        }
-
-        /// <summary>
-        /// Method for updating the <see cref="TriggersList"/> with all <see cref="Trigger"/>s.
-        /// </summary>
-        private void UpdateTriggersList()
-        {
-            TriggersList.ItemsSource = _context.Triggers.ToList();
         }
     }
 }
