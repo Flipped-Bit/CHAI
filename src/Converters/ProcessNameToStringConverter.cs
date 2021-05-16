@@ -22,10 +22,15 @@ namespace CHAI.Converters
         /// <returns>A <see cref="string"/> representation of the <see cref="Process.ProcessName"/> value.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var processName = value.ToString();
-            var process = Process.GetProcessesByName(processName).FirstOrDefault();
+            if (value != null)
+            {
+                var processName = value.ToString();
+                var process = Process.GetProcessesByName(processName).FirstOrDefault();
 
-            return process != null ? processName : string.Empty;
+                return process != null ? processName : string.Empty;
+            }
+
+            return string.Empty;
         }
 
         /// <summary>
