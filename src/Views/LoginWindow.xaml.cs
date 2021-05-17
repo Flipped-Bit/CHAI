@@ -35,6 +35,7 @@ namespace CHAI.Views
         {
             _loginWindowLogger = logger;
             InitializeComponent();
+            VerifyConfigLoaded();
             Browser.Source = GenerateOauthUrl();
             Browser.CoreWebView2InitializationCompleted += BrowserInitializationCompleted;
             DataContext = Owner;
@@ -67,6 +68,7 @@ namespace CHAI.Views
         {
             Browser.CoreWebView2.DocumentTitleChanged += Browser_TitleChanged;
         }
+
         /// <summary>
         /// Method for creating OAuth request Url.
         /// </summary>
@@ -124,6 +126,27 @@ namespace CHAI.Views
             }
 
             return user;
+        }
+
+        /// <summary>
+        /// Method for Verify the config has loaded successfully.
+        /// </summary>
+        private void VerifyConfigLoaded()
+        {
+            if (ClientData == null)
+            {
+                _loginWindowLogger.LogError("Client Data not loaded correctly");
+            }
+
+            if (Endpoints == null)
+            {
+                _loginWindowLogger.LogError("Endpoints not loaded correctly");
+            }
+
+            if (Scopes == null)
+            {
+                _loginWindowLogger.LogError("Scopes not loaded correctly");
+            }
         }
     }
 }
