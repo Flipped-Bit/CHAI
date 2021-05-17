@@ -163,9 +163,11 @@ namespace CHAI.Views
                     ChatConnectedState.Foreground = Brushes.Red;
                 }
             }
-
-            ChatConnectedState.Text = "Chat disconnected";
-            ChatConnectedState.Foreground = Brushes.Red;
+            else
+            {
+                ChatConnectedState.Text = "Chat disconnected";
+                ChatConnectedState.Foreground = Brushes.Red;
+            }
         }
 
         /// <summary>
