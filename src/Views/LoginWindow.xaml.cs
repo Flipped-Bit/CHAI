@@ -1,6 +1,7 @@
 using CHAI.Extensions;
 using CHAI.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
@@ -36,9 +37,10 @@ namespace CHAI.Views
             _loginWindowLogger = logger;
             InitializeComponent();
             VerifyConfigLoaded();
-            Browser.Source = GenerateOauthUrl();
             Browser.CoreWebView2InitializationCompleted += BrowserInitializationCompleted;
+            Browser.Source = GenerateOauthUrl();
             DataContext = Owner;
+            _loginWindowLogger.LogInformation("Page loaded successfully");
         }
 
         /// <summary>
@@ -50,6 +52,7 @@ namespace CHAI.Views
         {
             if (Browser.CoreWebView2.DocumentTitle.StartsWith("localhost"))
             {
+                _loginWindowLogger.LogInformation("Login successful");
                 var settingsWindow = Owner as SettingsWindow;
                 var url = HttpUtility.HtmlDecode(Browser.CoreWebView2.Source);
                 var token = GetTokenFromUrl(url);
@@ -64,8 +67,9 @@ namespace CHAI.Views
         /// </summary>
         /// <param name="sender">The sender of <see cref="BrowserInitializationCompleted"/> event.</param>
         /// <param name="e">Arguments from <see cref="BrowserInitializationCompleted"/> event.</param>am>
-        private void BrowserInitializationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs e)
+        private void BrowserInitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
         {
+            _loginWindowLogger.LogInformation("Browser loaded successfully");
             Browser.CoreWebView2.DocumentTitleChanged += Browser_TitleChanged;
         }
 
@@ -75,12 +79,14 @@ namespace CHAI.Views
         /// <returns>OAuth Url.</returns>
         private Uri GenerateOauthUrl()
         {
-            return new Uri(string.Join(
+            var url = new Uri(string.Join(
                 '&',
                 $"{Endpoints.Get("Auth")}?response_type=token",
                 $"client_id={ClientData.Get("Id")}",
                 $"redirect_uri={Endpoints.Get("Redirect")}",
                 $"scope={Scopes.Get("Bits")}"));
+            _loginWindowLogger.LogInformation($"URL Generated: {url}");
+            return url;
         }
 
         /// <summary>
@@ -92,7 +98,9 @@ namespace CHAI.Views
         {
             var header = "#access_token=";
             var headerIndex = url.IndexOf(header) + header.Length;
-            return url[headerIndex..url.IndexOf("&")];
+            var token = url[headerIndex..url.IndexOf("&")];
+            _loginWindowLogger.LogInformation($"Token: {token} generated");
+            return token;
         }
 
         /// <summary>
