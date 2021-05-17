@@ -64,6 +64,7 @@ namespace CHAI.Data
                     GlobalCooldown = 0,
                     GlobalCooldownUnit = CooldownUnit.Seconds,
                     LoggingEnabled = true,
+                    Username = "Castlehead",
                 },
             };
         }
