@@ -304,6 +304,7 @@ namespace CHAI.Views
                 "This is useful for preventing people from spamming multiple different triggers in a short period.",
                 "Global cooldown");
         }
+
         private string ShowImportConfirmation()
         {
             var dialogResult = MessageBox.Show(
