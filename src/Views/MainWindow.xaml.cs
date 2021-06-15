@@ -508,6 +508,24 @@ namespace CHAI.Views
         }
 
         /// <summary>
+        /// Method for testing <see cref="Trigger"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="TestTrigger"/> event.</param>
+        /// <param name="e">Arguments from <see cref="TestTrigger"/> event.</param>
+        private void TestTrigger(object sender, RoutedEventArgs e)
+        {
+            var trigger = ((FrameworkElement)sender).DataContext as Trigger;
+            if (!string.IsNullOrWhiteSpace(trigger.CharAnimTriggerKeyChar))
+            {
+                ProcessManager.SendKeyPress(_ircLogger, Settings.Application, trigger.CharAnimTriggerKeyChar, trigger.CharAnimTriggerKeyValue);
+            }
+            else
+            {
+                _mainWindowlogger.LogInformation("Trigger Char is unset");
+            }
+        }
+
+        /// <summary>
         /// Method for Updating <see cref="KeyValue"/>.
         /// </summary>
         /// <param name="sender">The sender of <see cref="TriggersListSelectionChanged"/> event.</param>
