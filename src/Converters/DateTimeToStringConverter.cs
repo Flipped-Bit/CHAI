@@ -20,7 +20,7 @@ namespace CHAI.Converters
         /// <returns>A <see cref="string"/> representation of the <see cref="DateTime"/> value if it is greater than <see cref="DateTime.MinValue"/>.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (DateTime)value > DateTime.MinValue ? ((DateTime)value).Day.ToString() : "Never";
+            return (DateTime)value > DateTime.MinValue ? ((DateTime)value).ToString() : "Never";
         }
 
         /// <summary>
