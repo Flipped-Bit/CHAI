@@ -50,12 +50,13 @@ namespace CHAI
         /// </summary>
         /// <param name="logger">The injected <see cref="ILogger{ProcessManager}"/>.</param>
         /// <param name="processName">Name of recipient <see cref="Process"/>.</param>
+        /// <param name="keyValue">Fullname of key to send to <see cref="Process"/>.</param>
         /// <param name="key">Key to send to the <see cref="Process"/>.</param>
-        public static void SendKeyPress(ILogger logger, string processName, int key)
+        public static void SendKeyPress(ILogger logger, string processName, string keyValue, int key)
         {
             if (ProcessRunning(processName))
             {
-                logger.LogInformation($"Sending {key} to {processName} as {key}");
+                logger.LogInformation($"Sending {keyValue} to {processName} as {key}");
                 var result = SendMessage(Process.GetProcessesByName(processName)[0].MainWindowHandle, 0x0104, key, null);
                 logger.LogInformation($"{result}");
             }

@@ -148,7 +148,7 @@ namespace CHAI
 
                                     _logger.LogInformation($"{trigger.Name} matched!!");
 
-                                    ProcessManager.SendKeyPress(_logger, _settings.Application, trigger.CharAnimTriggerKeyValue);
+                                    ProcessManager.SendKeyPress(_logger, _settings.Application, trigger.CharAnimTriggerKeyChar, trigger.CharAnimTriggerKeyValue);
                                     trigger.LastTriggered = DateTime.Now;
 
                                     if (_settings.LoggingEnabled)
