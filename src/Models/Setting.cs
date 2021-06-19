@@ -50,7 +50,7 @@ namespace CHAI.Models
         /// Gets or sets the <see cref="GlobalCooldownUnit"/> for all <see cref="Trigger" /> instances.
         /// </summary>
         [Required]
-        public CooldownUnit GlobalCooldownUnit { get; set; }
+        public TimeSpanUnit GlobalCooldownUnit { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="DateTime"/> that any <see cref="Trigger" /> instance was <see cref="Trigger.LastTriggered"/>.

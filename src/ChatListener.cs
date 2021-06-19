@@ -198,21 +198,21 @@ namespace CHAI
         /// Method to check if <see cref="Trigger"/> is on Cooldown.
         /// </summary>
         /// <param name="lastTriggered"><see cref="DateTime"/> that <see cref="Trigger"/> was last triggered.</param>
-        /// <param name="cooldownUnit"><see cref="CooldownUnit"/>.</param>
+        /// <param name="cooldownUnit"><see cref="TimeSpanUnit"/>.</param>
         /// <param name="cooldown">Duration of Coooldown.</param>
         /// <returns>Bool value indicating whether the <see cref="Trigger"/> Cooldown has ended.</returns>
-        private DateTime GetEndOfCooldown(DateTime lastTriggered, CooldownUnit cooldownUnit, int cooldown)
+        private DateTime GetEndOfCooldown(DateTime lastTriggered, TimeSpanUnit cooldownUnit, int cooldown)
         {
             switch (cooldownUnit)
             {
-                case CooldownUnit.None:
+                case TimeSpanUnit.None:
                     _logger.LogInformation("Trigger has no Cooldown Unit set");
                     break;
-                case CooldownUnit.Seconds:
+                case TimeSpanUnit.Seconds:
                     return lastTriggered.AddSeconds(cooldown);
-                case CooldownUnit.Minutes:
+                case TimeSpanUnit.Minutes:
                     return lastTriggered.AddMinutes(cooldown);
-                case CooldownUnit.Hours:
+                case TimeSpanUnit.Hours:
                     return lastTriggered.AddHours(cooldown);
                 default:
                     break;

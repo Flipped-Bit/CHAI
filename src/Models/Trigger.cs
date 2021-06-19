@@ -1,4 +1,4 @@
-﻿using CHAI.Models.Enums;
+using CHAI.Models.Enums;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -37,7 +37,7 @@ namespace CHAI.Models
             CharAnimTriggerKeyChar = triggerDTO.CharAnimTriggerKeyChar;
             CharAnimTriggerKeyValue = triggerDTO.CharAnimTriggerKeyValue;
             Cooldown = triggerDTO.Cooldown;
-            CooldownUnit = (CooldownUnit)triggerDTO.CooldownUnit + 1;
+            CooldownUnit = (TimeSpanUnit)triggerDTO.CooldownUnit + 1;
             LastTriggered = triggerDTO.LastTriggered;
             RewardName = triggerDTO.RewardName;
         }
@@ -136,7 +136,7 @@ namespace CHAI.Models
         /// Gets or sets the <see cref="CooldownUnit"/> for this <see cref="Trigger" /> instance.
         /// </summary>
         [Required]
-        public CooldownUnit CooldownUnit { get; set; }
+        public TimeSpanUnit CooldownUnit { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="DateTime"/> that this <see cref="Trigger" /> instance was <see cref="LastTriggered"/>.

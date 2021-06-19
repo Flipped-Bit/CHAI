@@ -1,4 +1,4 @@
-﻿using CHAI.Models;
+using CHAI.Models;
 using CHAI.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -62,7 +62,7 @@ namespace CHAI.Data
                 {
                     Id = 1,
                     GlobalCooldown = 0,
-                    GlobalCooldownUnit = CooldownUnit.Seconds,
+                    GlobalCooldownUnit = TimeSpanUnit.Seconds,
                     LoggingEnabled = true,
                 },
             };
