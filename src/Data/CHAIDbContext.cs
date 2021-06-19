@@ -1,4 +1,4 @@
-using CHAI.Models;
+﻿using CHAI.Models;
 using CHAI.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +16,7 @@ namespace CHAI.Data
         public CHAIDbContext(DbContextOptions<CHAIDbContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+            Database.Migrate();
         }
 
         /// <summary>
