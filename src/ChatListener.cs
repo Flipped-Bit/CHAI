@@ -1,3 +1,4 @@
+using CHAI.Data;
 using CHAI.Models;
 using CHAI.Models.Enums;
 using Microsoft.Extensions.Logging;
@@ -73,6 +74,9 @@ namespace CHAI
             var eventService = new EventService(_logger, _settings);
             eventService.Start();
             _logger.LogInformation("Event service started");
+
+            var context = new CHAIDbContextFactory()
+                .CreateDbContext(null);
 
             while (IsActive)
             {
@@ -152,8 +156,16 @@ namespace CHAI
 
                                     _logger.LogInformation($"{trigger.Name} matched!!");
 
-                                    ProcessManager.SendKeyPress(_logger, _settings.Application, trigger.CharAnimTriggerKeyChar, trigger.CharAnimTriggerKeyValue);
+
                                     trigger.LastTriggered = DateTime.Now;
+
+                                    // add event for activation to queue 
+                                    context.EventQueue.Add(new QueuedEvent()
+                                    {
+                                        TriggeredAt = trigger.LastTriggered,
+                                        TriggerId = trigger.Id,
+                                    });
+                                    _logger.LogInformation($"Event {(context.SaveChanges() > 0 ? "added successfully" : "adding failed")}");
 
                                     if (_settings.LoggingEnabled)
                                     {
