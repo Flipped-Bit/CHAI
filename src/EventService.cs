@@ -1,5 +1,6 @@
 ﻿using CHAI.Data;
 using CHAI.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -86,7 +87,42 @@ namespace CHAI
                 var trigger = context.Triggers.FirstOrDefault(t => t.Id == pendingEvent.TriggerId);
                 ProcessManager.SendKeyPress(_logger, _settings.Application, trigger.CharAnimTriggerKeyChar, trigger.CharAnimTriggerKeyValue);
                 context.Remove(pendingEvent);
-                context.SaveChanges();
+                var saved = false;
+                while (!saved)
+                {
+                    try
+                    {
+                        // Attempt to save changes to the database
+                        context.SaveChanges();
+                        saved = true;
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        foreach (var entry in ex.Entries)
+                        {
+                            if (entry.Entity is QueuedEvent)
+                            {
+                                var proposedValues = entry.CurrentValues;
+                                var databaseValues = entry.GetDatabaseValues();
+
+                                foreach (var property in proposedValues.Properties)
+                                {
+                                    var proposedValue = proposedValues[property];
+                                    var databaseValue = databaseValues[property];
+                                }
+
+                                // Refresh original values to bypass next concurrency check
+                                entry.OriginalValues.SetValues(databaseValues);
+                            }
+                            else
+                            {
+                                throw new NotSupportedException(
+                                    "Don't know how to handle concurrency conflicts for "
+                                    + entry.Metadata.Name);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
