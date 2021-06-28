@@ -518,7 +518,15 @@ namespace CHAI.Views
             var trigger = ((FrameworkElement)sender).DataContext as Trigger;
             if (!string.IsNullOrWhiteSpace(trigger.CharAnimTriggerKeyChar))
             {
-                ProcessManager.SendKeyPress(_ircLogger, Settings.Application, trigger.CharAnimTriggerKeyChar, trigger.CharAnimTriggerKeyValue);
+                trigger.LastTriggered = DateTime.Now;
+
+                // add event for activation to queue
+                _context.EventQueue.Add(new QueuedEvent()
+                {
+                    TriggeredAt = trigger.LastTriggered,
+                    TriggerId = trigger.Id,
+                });
+                _context.SaveChanges();
             }
             else
             {
