@@ -188,7 +188,8 @@ namespace CHAI.Views
             if (!string.IsNullOrWhiteSpace(Keyword.Text))
             {
                 var newKeyword = Keyword.Text;
-                ((Trigger)TriggersList.SelectedItem).Keywords = string.Join(",", ((Trigger)TriggersList.SelectedItem).Keywords, newKeyword);
+                ((Trigger)TriggersList.SelectedItem).Keywords = string.IsNullOrEmpty(((Trigger)TriggersList.SelectedItem).Keywords) ? newKeyword :
+                    string.Join(",", ((Trigger)TriggersList.SelectedItem).Keywords, newKeyword);
                 Keyword.Text = string.Empty;
                 Keywords.ItemsSource = ((Trigger)TriggersList.SelectedItem).Keywords.Split(",")
                     .ToList();
