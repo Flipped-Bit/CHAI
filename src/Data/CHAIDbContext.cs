@@ -20,6 +20,11 @@ namespace CHAI.Data
         }
 
         /// <summary>
+        /// Gets or Sets a <see cref="DbSet{QueuedEvent}"/> for storing <see cref="QueuedEvent"/> entities.
+        /// </summary>
+        public DbSet<QueuedEvent> EventQueue { get; set; }
+
+        /// <summary>
         /// Gets or Sets a <see cref="DbSet{Setting}"/> for storing <see cref="Setting"/> entities.
         /// </summary>
         public DbSet<Setting> Settings { get; set; }
