@@ -1,4 +1,4 @@
-﻿using CHAI.Models;
+using CHAI.Models;
 using CHAI.Models.Enums;
 using Microsoft.Extensions.Logging;
 using System;
@@ -70,6 +70,10 @@ namespace CHAI
         /// </summary>
         public override void Run()
         {
+            var eventService = new EventService(_logger, _settings);
+            eventService.Start();
+            _logger.LogInformation("Event service started");
+
             while (IsActive)
             {
                 string message = _ircClient.ReadMessage();
