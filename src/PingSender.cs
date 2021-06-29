@@ -1,7 +1,9 @@
 ﻿using CHAI.Models;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Threading;
+using System.Timers;
+using Thread = System.Threading.Thread;
+using ThreadStart = System.Threading.ThreadStart;
 
 namespace CHAI
 {
@@ -11,6 +13,11 @@ namespace CHAI
     public class PingSender : IrcService
     {
         /// <summary>
+        /// The <see cref="Timer"/>.
+        /// </summary>
+        protected Timer timer;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="PingSender"/> class.
         /// </summary>
         /// <param name="logger">The injected <see cref="ILogger"/>.</param>
@@ -19,20 +26,29 @@ namespace CHAI
             : base(logger)
         {
             _ircClient = ircClient;
-            IsActive = false;
             thread = new Thread(new ThreadStart(Run));
+            timer = new Timer
+            {
+                Interval = TimeSpan.FromMinutes(4).TotalMilliseconds,
+                AutoReset = true,
+            };
+        }
+
+        /// <summary>
+        /// Method that is <see cref="Run"/> when the <see cref="Thread"/> is started.
+        /// </summary>
+        public override void Run()
+        {
+            timer.Elapsed += SendPing;
+            timer.Enabled = true;
         }
 
         /// <summary>
         /// Method to send ping to server every 5 Minutes/>.
         /// </summary>
-        public override void Run()
+        private void SendPing(object sender, ElapsedEventArgs e)
         {
-            while (IsActive)
-            {
-                _ircClient.SendMessage("PING irc.twitch.tv");
-                Thread.Sleep(TimeSpan.FromMinutes(5));
-            }
+            _ircClient.SendMessage("PING irc.twitch.tv");
         }
     }
 }

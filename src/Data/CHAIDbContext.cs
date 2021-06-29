@@ -16,8 +16,13 @@ namespace CHAI.Data
         public CHAIDbContext(DbContextOptions<CHAIDbContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+            Database.Migrate();
         }
+
+        /// <summary>
+        /// Gets or Sets a <see cref="DbSet{QueuedEvent}"/> for storing <see cref="QueuedEvent"/> entities.
+        /// </summary>
+        public DbSet<QueuedEvent> EventQueue { get; set; }
 
         /// <summary>
         /// Gets or Sets a <see cref="DbSet{Setting}"/> for storing <see cref="Setting"/> entities.
@@ -62,7 +67,7 @@ namespace CHAI.Data
                 {
                     Id = 1,
                     GlobalCooldown = 0,
-                    GlobalCooldownUnit = CooldownUnit.Seconds,
+                    GlobalCooldownUnit = TimeSpanUnit.Seconds,
                     LoggingEnabled = true,
                 },
             };

@@ -25,7 +25,7 @@ namespace CHAI.Converters
         {
             var isBitCondition = Enum.IsDefined(typeof(BitsCondition), value.ToString());
 
-            var isCooldownUnit = Enum.IsDefined(typeof(CooldownUnit), value.ToString());
+            var isCooldownUnit = Enum.IsDefined(typeof(TimeSpanUnit), value.ToString());
 
             if (isBitCondition)
             {
@@ -35,7 +35,7 @@ namespace CHAI.Converters
 
             if (isCooldownUnit)
             {
-                var newEnum = Enum.Parse<CooldownUnit>(value.ToString());
+                var newEnum = Enum.Parse<TimeSpanUnit>(value.ToString());
                 return new KeyValuePair<string, string>(newEnum.GetDescription(), newEnum.ToString());
             }
 
@@ -58,8 +58,8 @@ namespace CHAI.Converters
             {
                 case nameof(BitsCondition):
                     return enumValue.ToEnum<BitsCondition>();
-                case nameof(CooldownUnit):
-                    return enumValue.ToEnum<CooldownUnit>();
+                case nameof(TimeSpanUnit):
+                    return enumValue.ToEnum<TimeSpanUnit>();
                 default:
                     return new NotImplementedException();
             }

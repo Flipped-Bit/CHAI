@@ -3,9 +3,9 @@
 namespace CHAI.Models.Enums
 {
     /// <summary>
-    /// An enumeration of all available <see cref="CooldownUnit"/>s.
+    /// An enumeration of all available <see cref="TimeSpanUnit"/>s.
     /// </summary>
-    public enum CooldownUnit
+    public enum TimeSpanUnit
     {
         /// <summary>
         /// No unit set

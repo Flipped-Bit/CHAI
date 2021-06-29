@@ -188,7 +188,8 @@ namespace CHAI.Views
             if (!string.IsNullOrWhiteSpace(Keyword.Text))
             {
                 var newKeyword = Keyword.Text;
-                ((Trigger)TriggersList.SelectedItem).Keywords = string.Join(",", ((Trigger)TriggersList.SelectedItem).Keywords, newKeyword);
+                ((Trigger)TriggersList.SelectedItem).Keywords = string.IsNullOrEmpty(((Trigger)TriggersList.SelectedItem).Keywords) ? newKeyword :
+                    string.Join(",", ((Trigger)TriggersList.SelectedItem).Keywords, newKeyword);
                 Keyword.Text = string.Empty;
                 Keywords.ItemsSource = ((Trigger)TriggersList.SelectedItem).Keywords.Split(",")
                     .ToList();
@@ -517,7 +518,15 @@ namespace CHAI.Views
             var trigger = ((FrameworkElement)sender).DataContext as Trigger;
             if (!string.IsNullOrWhiteSpace(trigger.CharAnimTriggerKeyChar))
             {
-                ProcessManager.SendKeyPress(_ircLogger, Settings.Application, trigger.CharAnimTriggerKeyChar, trigger.CharAnimTriggerKeyValue);
+                trigger.LastTriggered = DateTime.Now;
+
+                // add event for activation to queue
+                _context.EventQueue.Add(new QueuedEvent()
+                {
+                    TriggeredAt = trigger.LastTriggered,
+                    TriggerId = trigger.Id,
+                });
+                _mainWindowlogger.LogInformation($"Event {(_context.SaveChanges() > 0 ? "added successfully" : "adding failed")}");
             }
             else
             {

@@ -35,7 +35,7 @@ namespace CHAI
 
             services.AddDbContext<CHAIDbContext>(options =>
             {
-                options.UseSqlite($"Data Source = {Path.Join(APPDATAFOLDER, "CHAI", "CHAI.db")}");
+                options.UseSqlite($"Data Source = {Path.Join(APPDATAFOLDER, "CHAI", "Main.db")}");
             });
 
             // Added Serilog

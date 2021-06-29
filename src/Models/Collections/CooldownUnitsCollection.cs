@@ -17,7 +17,7 @@ namespace CHAI.Models.Collections
         /// </summary>
         public CooldownUnitsCollection()
         {
-            foreach (var cooldownUnit in Enum.GetValues(typeof(CooldownUnit)).Cast<CooldownUnit>())
+            foreach (var cooldownUnit in Enum.GetValues(typeof(TimeSpanUnit)).Cast<TimeSpanUnit>())
             {
                 Add(new KeyValuePair<string, string>(cooldownUnit.GetDescription(), cooldownUnit.ToString()));
             }
