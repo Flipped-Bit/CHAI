@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace CHAI
     /// <summary>
     /// Class for interacting with <see cref="Process"/>es.
     /// </summary>
-    public static class ProcessManager
+    public class ProcessManager
     {
         /// <summary>
         /// Method for finding <see cref="Process"/> by Window title.

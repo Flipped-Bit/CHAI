@@ -20,6 +20,11 @@ namespace CHAI
         /// </summary>
         private readonly ILogger _logger;
 
+        /// <summary>
+        /// The Injected <see cref="ILogger{ProcessManager}"/>.
+        /// </summary>
+        private readonly ILogger _processManagerLogger;
+
         private readonly List<Trigger> _triggers;
 
         private readonly Setting _settings;
@@ -33,14 +38,16 @@ namespace CHAI
         /// Initializes a new instance of the <see cref="ChatListener"/> class.
         /// </summary>
         /// <param name="logger">The injected <see cref="ILogger"/>.</param>
+        /// <param name="processManagerLogger">The Injected <see cref="ILogger{ProcessManager}"/>.</param>
         /// <param name="settings">The current <see cref="Setting"/>.</param>
         /// <param name="triggers">List of available <see cref="Trigger"/>s.</param>
         /// <param name="ircClient">The configured IRC Client.</param>
         /// <param name="channel">The channel the <see cref="IrcClient"/> is connected to/>.</param>
-        public ChatListener(ILogger logger, Setting settings, List<Trigger> triggers, IrcClient ircClient, string channel)
+        public ChatListener(ILogger logger, ILogger processManagerLogger, Setting settings, List<Trigger> triggers, IrcClient ircClient, string channel)
             : base(logger)
         {
             _channel = channel;
+            _processManagerLogger = processManagerLogger;
             _settings = settings;
             _triggers = triggers;
             _ircClient = ircClient;
@@ -71,7 +78,7 @@ namespace CHAI
         /// </summary>
         public override void Run()
         {
-            var eventService = new EventService(_logger, _settings);
+            var eventService = new EventService(_logger, _processManagerLogger, _settings);
             eventService.Start();
             _logger.LogInformation("Event service started");
 
@@ -156,10 +163,9 @@ namespace CHAI
 
                                     _logger.LogInformation($"{trigger.Name} matched!!");
 
-
                                     trigger.LastTriggered = DateTime.Now;
 
-                                    // add event for activation to queue 
+                                    // add event for activation to queue
                                     context.EventQueue.Add(new QueuedEvent()
                                     {
                                         TriggeredAt = trigger.LastTriggered,

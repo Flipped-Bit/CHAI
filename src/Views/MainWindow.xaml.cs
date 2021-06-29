@@ -38,9 +38,19 @@ namespace CHAI.Views
         private readonly CHAIDbContext _context;
 
         /// <summary>
+        /// The injected <see cref="ILogger{ChatListener}"/>.
+        /// </summary>
+        private readonly ILogger _chatlistenerLogger;
+
+        /// <summary>
         /// The injected <see cref="ILogger{IrcService}"/>.
         /// </summary>
         private readonly ILogger _ircLogger;
+
+        /// <summary>
+        /// The injected <see cref="ILogger{PingSender}"/>.
+        /// </summary>
+        private readonly ILogger _pingLogger;
 
         /// <summary>
         /// The injected <see cref="ILogger{LoginWindow}"/>.
@@ -53,6 +63,11 @@ namespace CHAI.Views
         private readonly ILogger _mainWindowlogger;
 
         /// <summary>
+        /// The Injected <see cref="ILogger{ProcessManager}"/>.
+        /// </summary>
+        private readonly ILogger _processManagerLogger;
+
+        /// <summary>
         /// The injected <see cref="ILogger{SettingsWindow}"/>.
         /// </summary>
         private readonly ILogger _settingsWindowLogger;
@@ -61,21 +76,29 @@ namespace CHAI.Views
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
         /// <param name="context">The injected <see cref="CHAIDbContext"/>.</param>
-        /// <param name="ircLogger">The injected <see cref="ILogger"/> for <see cref="IrcClient"/>.</param>
+        /// <param name="chatListenerLogger">The injected <see cref="ILogger"/> for <see cref="ChatListener"/>.</param>
         /// <param name="loginLogger">The injected <see cref="ILogger"/> for <see cref="LoginWindow"/>.</param>
         /// <param name="mainLogger">The injected <see cref="ILogger"/>.</param>
+        /// <param name="pingLogger">The injected <see cref="ILogger"/> for <see cref="PingSender"/>.</param>
+        /// <param name="processManagerLogger">The injected <see cref="ILogger"/> for <see cref="ProcessManager"/>.</param>
         /// <param name="settingsLogger">The injected <see cref="ILogger"/> for <see cref="SettingsWindow"/>.</param>
         public MainWindow(
             CHAIDbContext context,
+            ILogger<ChatListener> chatListenerLogger,
             ILogger<IrcService> ircLogger,
             ILogger<LoginWindow> loginLogger,
             ILogger<MainWindow> mainLogger,
+            ILogger<PingSender> pingLogger,
+            ILogger<ProcessManager> processManagerLogger,
             ILogger<SettingsWindow> settingsLogger)
         {
             _context = context;
+            _chatlistenerLogger = chatListenerLogger;
             _ircLogger = ircLogger;
             _loginWindowLogger = loginLogger;
             _mainWindowlogger = mainLogger;
+            _pingLogger = pingLogger;
+            _processManagerLogger = processManagerLogger;
             _settingsWindowLogger = settingsLogger;
             InitializeComponent();
             RefreshConnectedApplication();
@@ -497,13 +520,13 @@ namespace CHAI.Views
         private void StartIRCConnection()
         {
             // Ping to the server to make sure the bot stays connected
-            PingSender ping = new PingSender(_ircLogger, IrcClient);
+            PingSender ping = new PingSender(_pingLogger, IrcClient);
             ping.Start();
 
             var triggers = _context.Triggers.ToList();
 
             // Listen to the chat
-            ChatListener chatListener = new ChatListener(_ircLogger, Settings, triggers, IrcClient, Settings.Username.ToLower());
+            ChatListener chatListener = new ChatListener(_chatlistenerLogger, _processManagerLogger, Settings, triggers, IrcClient, Settings.Username.ToLower());
             chatListener.Start();
             chatListener.StartLogging();
         }

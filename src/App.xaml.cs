@@ -44,7 +44,7 @@ namespace CHAI
                 Path.Join(APPDATAFOLDER, "CHAI", "Logs", $"{DateTime.Now:dd-MM-yyyy}.log"),
                 LogEventLevel.Verbose,
                 outputTemplate: "[{SourceContext}] {Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
-            .WriteTo.Debug()
+            .WriteTo.Debug(LogEventLevel.Information, outputTemplate: "[{SourceContext}] {Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
             services.AddLogging(options =>
             {

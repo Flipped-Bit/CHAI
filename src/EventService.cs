@@ -31,6 +31,11 @@ namespace CHAI
         private readonly ILogger _logger;
 
         /// <summary>
+        /// The Injected <see cref="ILogger{ProcessManager}"/>.
+        /// </summary>
+        private readonly ILogger _processManagerLogger;
+
+        /// <summary>
         /// The <see cref="Setting"/>s.
         /// </summary>
         private readonly Setting _settings;
@@ -39,10 +44,12 @@ namespace CHAI
         /// Initializes a new instance of the <see cref="EventService"/> class.
         /// </summary>
         /// <param name="logger">The Injected <see cref="ILogger"/>.</param>
+        /// <param name="processManagerLogger">The Injected <see cref="ILogger{ProcessManager}"/>.</param>
         /// <param name="settings">The <see cref="Setting"/>s.</param>
-        public EventService(ILogger logger, Setting settings)
+        public EventService(ILogger logger, ILogger processManagerLogger, Setting settings)
         {
             _logger = logger;
+            _processManagerLogger = processManagerLogger;
             _settings = settings;
             thread = new Thread(new ThreadStart(Run));
             timer = new Timer
@@ -85,7 +92,7 @@ namespace CHAI
             if (pendingEvent != null)
             {
                 var trigger = context.Triggers.FirstOrDefault(t => t.Id == pendingEvent.TriggerId);
-                ProcessManager.SendKeyPress(_logger, _settings.Application, trigger.CharAnimTriggerKeyChar, trigger.CharAnimTriggerKeyValue);
+                ProcessManager.SendKeyPress(_processManagerLogger, _settings.Application, trigger.CharAnimTriggerKeyChar, trigger.CharAnimTriggerKeyValue);
                 context.Remove(pendingEvent);
                 var saved = false;
                 while (!saved)
@@ -98,7 +105,7 @@ namespace CHAI
                     }
                     catch (DbUpdateConcurrencyException ex)
                     {
-                        _logger.LogError("Entity not removed");
+                        _logger.LogError($"Entity not removed: {ex.Message}");
                     }
                 }
             }
