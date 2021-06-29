@@ -526,7 +526,7 @@ namespace CHAI.Views
                     TriggeredAt = trigger.LastTriggered,
                     TriggerId = trigger.Id,
                 });
-                _context.SaveChanges();
+                _mainWindowlogger.LogInformation($"Event {(_context.SaveChanges() > 0 ? "added successfully" : "adding failed")}");
             }
             else
             {

@@ -93,34 +93,12 @@ namespace CHAI
                     try
                     {
                         // Attempt to save changes to the database
-                        context.SaveChanges();
+                        _logger.LogInformation($"Event {(context.SaveChanges() > 0 ? "removed successfully" : "removal failed")}");
                         saved = true;
                     }
                     catch (DbUpdateConcurrencyException ex)
                     {
-                        foreach (var entry in ex.Entries)
-                        {
-                            if (entry.Entity is QueuedEvent)
-                            {
-                                var proposedValues = entry.CurrentValues;
-                                var databaseValues = entry.GetDatabaseValues();
-
-                                foreach (var property in proposedValues.Properties)
-                                {
-                                    var proposedValue = proposedValues[property];
-                                    var databaseValue = databaseValues[property];
-                                }
-
-                                // Refresh original values to bypass next concurrency check
-                                entry.OriginalValues.SetValues(databaseValues);
-                            }
-                            else
-                            {
-                                throw new NotSupportedException(
-                                    "Don't know how to handle concurrency conflicts for "
-                                    + entry.Metadata.Name);
-                            }
-                        }
+                        _logger.LogError("Entity not removed");
                     }
                 }
             }
