@@ -45,6 +45,7 @@ namespace CHAI
                 LogEventLevel.Verbose,
                 outputTemplate: "[{SourceContext}] {Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
             .WriteTo.Debug(LogEventLevel.Information, outputTemplate: "[{SourceContext}] {Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .CreateLogger();
             services.AddLogging(options =>
             {
