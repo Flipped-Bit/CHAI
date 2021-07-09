@@ -82,9 +82,6 @@ namespace CHAI
             eventService.Start();
             _logger.LogInformation("Event service started");
 
-            var context = new CHAIDbContextFactory()
-                .CreateDbContext(null);
-
             while (IsActive)
             {
                 string message = _ircClient.ReadMessage();
@@ -164,6 +161,9 @@ namespace CHAI
                                     _logger.LogInformation($"{trigger.Name} matched!!");
 
                                     trigger.LastTriggered = DateTime.Now;
+
+                                    var context = new CHAIDbContextFactory()
+                                        .CreateDbContext(null);
 
                                     // add event for activation to queue
                                     context.EventQueue.Add(new QueuedEvent()
