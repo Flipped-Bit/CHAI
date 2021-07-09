@@ -78,6 +78,7 @@ namespace CHAI.Views
         /// <param name="context">The injected <see cref="CHAIDbContext"/>.</param>
         /// <param name="chatListenerLogger">The injected <see cref="ILogger"/> for <see cref="ChatListener"/>.</param>
         /// <param name="loginLogger">The injected <see cref="ILogger"/> for <see cref="LoginWindow"/>.</param>
+        /// <param name="ircLogger">The injected <see cref="ILogger{IrcService}"/>.</param>
         /// <param name="mainLogger">The injected <see cref="ILogger"/>.</param>
         /// <param name="pingLogger">The injected <see cref="ILogger"/> for <see cref="PingSender"/>.</param>
         /// <param name="processManagerLogger">The injected <see cref="ILogger"/> for <see cref="ProcessManager"/>.</param>
@@ -153,15 +154,7 @@ namespace CHAI.Views
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(Settings.Application))
-                {
-                    ApplicationConnectionState.Text = "Set Application in Settings";
-                }
-                else
-                {
-                    ApplicationConnectionState.Text = $"{Settings.Application} not found!";
-                }
-
+                ApplicationConnectionState.Text = string.IsNullOrWhiteSpace(Settings.Application) ? "Set Application in Settings" : $"{Settings.Application} not found!";
                 ApplicationConnectionState.Foreground = Brushes.Red;
             }
         }
