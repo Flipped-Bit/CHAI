@@ -175,11 +175,18 @@ namespace CHAI
 
                                     if (_settings.LoggingEnabled)
                                     {
-                                        _logger.LogInformation(trigger.Name, messageInfo.UserName, messageInfo.Bits, messageInfo.Content);
+                                        _logger.LogInformation($"Trigger:{trigger.Name} triggered by {messageInfo.UserName} with {messageInfo.Bits} bits");
                                     }
                                 }
                             }
 
+                            break;
+                        case var p when p.Contains("PONG"):
+                            _logger.LogInformation(p);
+                            break;
+                        case var r when r.Contains("RECONNECT"):
+                            _logger.LogWarning(r);
+                            Stop();
                             break;
                         default:
                             break;
