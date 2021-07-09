@@ -224,6 +224,21 @@ namespace CHAI
         }
 
         /// <summary>
+        /// Method to check if message contains any of the required words for the <see cref="Trigger"/>.
+        /// </summary>
+        /// <param name="trigger">The <see cref="Trigger"/> to check.</param>
+        /// <param name="message">The <see cref="Message"/> to check.</param>
+        /// <returns>
+        /// Bool value indicating whether the message contains any of the required words for the <see cref="Trigger"/>.
+        /// </returns>
+        private bool ContainsRequiredWord(Trigger trigger, Message message)
+        {
+            return trigger.Keywords
+                .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                .Any(k => message.Content.Contains(k, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
         /// Method to check if <see cref="Trigger"/> is on Cooldown.
         /// </summary>
         /// <param name="lastTriggered"><see cref="DateTime"/> that <see cref="Trigger"/> was last triggered.</param>
