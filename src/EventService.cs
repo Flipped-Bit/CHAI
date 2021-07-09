@@ -83,32 +83,60 @@ namespace CHAI
         /// </summary>
         private void TriggerEvent(object sender, ElapsedEventArgs e)
         {
-            var context = new CHAIDbContextFactory()
-                .CreateDbContext(null);
+            var pendingEvent = GetNextEvent();
 
-            var pendingEvent = context.EventQueue
-                .OrderBy(e => e.TriggeredAt)
-                .FirstOrDefault(e => e.TriggeredAt < DateTime.Now);
             if (pendingEvent != null)
             {
-                var trigger = context.Triggers.FirstOrDefault(t => t.Id == pendingEvent.TriggerId);
+                var trigger = GetTrigger(pendingEvent.TriggerId);
+
                 ProcessManager.SendKeyPress(_processManagerLogger, _settings.Application, trigger.CharAnimTriggerKeyChar, trigger.CharAnimTriggerKeyValue);
-                context.Remove(pendingEvent);
-                var saved = false;
-                while (!saved)
+
+                DequeueEvent(pendingEvent);
+            }
+        }
+
+        private QueuedEvent GetNextEvent()
+        {
+            var context = new CHAIDbContextFactory()
+                    .CreateDbContext(null);
+
+            return context.EventQueue
+                .OrderBy(e => e.TriggeredAt)
+                .FirstOrDefault(e => e.TriggeredAt < DateTime.Now);
+        }
+
+        private void DequeueEvent(QueuedEvent triggeredEvent)
+        {
+            var context = new CHAIDbContextFactory()
+                .CreateDbContext(null);
+            context.Remove(triggeredEvent);
+            var saved = false;
+            while (!saved)
+            {
+                try
                 {
-                    try
-                    {
-                        // Attempt to save changes to the database
-                        _logger.LogInformation($"Event {(context.SaveChanges() > 0 ? "removed successfully" : "removal failed")}");
-                        saved = true;
-                    }
-                    catch (DbUpdateConcurrencyException ex)
-                    {
-                        _logger.LogError($"Entity not removed: {ex.Message}");
-                    }
+                    // Attempt to save changes to the database
+                    _logger.LogInformation($"Event {(context.SaveChanges() > 0 ? "removed successfully" : "removal failed")}");
+                    saved = true;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    var entry = ex.Entries.FirstOrDefault();
+                    _logger.LogError($"Entity {entry.Entity} not removed: {ex.Message}");
+                }
+                catch (Exception exc)
+                {
+                    _logger.LogError($"Whoops!!, {exc.Message}");
                 }
             }
+        }
+
+        private Trigger GetTrigger(int triggerId)
+        {
+            var context = new CHAIDbContextFactory()
+                    .CreateDbContext(null);
+
+            return context.Triggers.FirstOrDefault(t => t.Id == triggerId);
         }
     }
 }
