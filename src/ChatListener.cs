@@ -109,7 +109,7 @@ namespace CHAI
                                 }
 
                                 List<Trigger> triggers = _triggers
-                                    .Where(trigger => string.IsNullOrEmpty(trigger.RewardName))
+                                    .Where(trigger => string.IsNullOrEmpty(trigger.RewardName) && ContainsRequiredWord(trigger, messageInfo))
                                     .ToList();
 
                                 foreach (var trigger in triggers)
