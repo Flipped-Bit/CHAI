@@ -122,12 +122,6 @@ namespace CHAI
 
                                     var bitsRequired = AreBitsRequired(trigger);
 
-                                    if (!bitsRequired && trigger.Keywords != string.Empty)
-                                    {
-                                        _logger.LogInformation("Either Bits or Keywords needed");
-                                        continue;
-                                    }
-
                                     if (bitsRequired && messageInfo.Bits == 0)
                                     {
                                         _logger.LogInformation("Bits were expected but none were given");
