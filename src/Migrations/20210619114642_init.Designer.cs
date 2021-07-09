@@ -10,8 +10,11 @@ namespace CHAI.Migrations
 {
     [DbContext(typeof(CHAIDbContext))]
     [Migration("20210619114642_init")]
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     partial class Init
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
+        /// <inheritdoc/>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
