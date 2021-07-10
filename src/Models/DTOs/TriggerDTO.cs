@@ -41,6 +41,10 @@ namespace CHAI.Models
             CooldownUnit = (int)trigger.CooldownUnit - 1;
             LastTriggered = trigger.LastTriggered;
             RewardName = trigger.RewardName ?? string.Empty;
+            HasDeactivationTime = trigger.HasDeactivationTime;
+            DeactivateAt = trigger.DeactivateAt;
+            Duration = trigger.Duration;
+            DurationUnit = trigger.DurationUnit;
         }
 
         /// <summary>
@@ -127,5 +131,25 @@ namespace CHAI.Models
         /// Gets or sets the <see cref="RewardName"/> used to trigger this <see cref="Trigger" /> instance.
         /// </summary>
         public string RewardName { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the <see cref="Trigger"/> instance has <see cref="HasDeactivationTime"/>.
+        /// </summary>
+        public bool HasDeactivationTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DateTime"/> that this <see cref="Trigger"/> instance is going to be deactivated at.
+        /// </summary>
+        public DateTime? DeactivateAt { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the <see cref="Duration"/> interval for this <see cref="Trigger"/> instance.
+        /// </summary>
+        public int Duration { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DurationUnit"/> for this <see cref="Trigger"/> instance.
+        /// </summary>
+        public TimeSpanUnit DurationUnit { get; set; }
     }
 }

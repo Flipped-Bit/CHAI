@@ -40,6 +40,8 @@ namespace CHAI
         /// </summary>
         private readonly Setting _settings;
 
+        private bool queueEmpty;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EventService"/> class.
         /// </summary>
@@ -83,6 +85,8 @@ namespace CHAI
         /// </summary>
         private void TriggerEvent(object sender, ElapsedEventArgs e)
         {
+            LogEventQueue();
+
             var pendingEvent = GetNextEvent();
 
             if (pendingEvent != null)
@@ -92,6 +96,33 @@ namespace CHAI
                 ProcessManager.SendKeyPress(_processManagerLogger, _settings.Application, trigger.CharAnimTriggerKeyChar, trigger.CharAnimTriggerKeyValue);
 
                 DequeueEvent(pendingEvent);
+            }
+        }
+
+        private void LogEventQueue()
+        {
+            var context = new CHAIDbContextFactory()
+                .CreateDbContext(null);
+
+            var events = context.EventQueue
+                .OrderBy(e => e.TriggeredAt)
+                .ToList();
+
+            if (events.Count > 0)
+            {
+                _logger.LogInformation("          ");
+                _logger.LogInformation("----------");
+                events.ForEach(e => _logger.LogInformation($"{e.TriggerId} | {e.TriggeredAt.ToLongTimeString()}"));
+                queueEmpty = false;
+                _logger.LogInformation("----------");
+            }
+            else
+            {
+                if (!queueEmpty)
+                {
+                    _logger.LogInformation("Event Queue is empty");
+                    queueEmpty = true;
+                }
             }
         }
 

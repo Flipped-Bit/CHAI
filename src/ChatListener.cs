@@ -78,6 +78,9 @@ namespace CHAI
         /// </summary>
         public override void Run()
         {
+            Dictionary<int, bool> stateDictionary =
+               _triggers.ToDictionary(t => t.Id, t => false);
+
             var eventService = new EventService(_logger, _processManagerLogger, _settings);
             eventService.Start();
             _logger.LogInformation("Event service started");
@@ -167,6 +170,46 @@ namespace CHAI
                                     });
                                     _logger.LogInformation($"Event {(context.SaveChanges() > 0 ? "added successfully" : "adding failed")}");
 
+                                    if (trigger.HasDeactivationTime && trigger.Duration >= 1 && trigger.DurationUnit != TimeSpanUnit.None)
+                                    {
+                                        var isActive = stateDictionary[trigger.Id];
+
+                                        if (isActive)
+                                        {
+                                            // remove follow up event for deactivation from queue
+                                            var eventsToRemove = context.EventQueue.Where(e => e.TriggerId == trigger.Id);
+                                            context.RemoveRange(eventsToRemove);
+
+                                            _logger.LogInformation($"Event {(context.SaveChanges() > 0 ? "removed successfully" : "removal failed")}");
+                                        }
+                                        else
+                                        {
+                                            var delay = trigger.DurationUnit switch
+                                            {
+                                                TimeSpanUnit.Seconds => TimeSpan.FromSeconds(trigger.Duration),
+                                                TimeSpanUnit.Minutes => TimeSpan.FromMinutes(trigger.Duration),
+                                                TimeSpanUnit.Hours => TimeSpan.FromHours(trigger.Duration),
+                                                _ => TimeSpan.FromSeconds(0),
+                                            };
+
+                                            var triggerDelay = trigger.LastTriggered.Add(delay);
+
+                                            context = new CHAIDbContextFactory()
+                                                .CreateDbContext(null);
+
+                                            // add follow up event for deactivation to queue
+                                            context.EventQueue.Add(new QueuedEvent()
+                                            {
+                                                TriggeredAt = triggerDelay,
+                                                TriggerId = trigger.Id,
+                                            });
+
+                                            _logger.LogInformation($"Event {(context.SaveChanges() > 0 ? "added successfully" : "adding failed")}");
+                                        }
+
+                                        stateDictionary[trigger.Id] = !stateDictionary[trigger.Id];
+                                    }
+
                                     if (_settings.LoggingEnabled)
                                     {
                                         _logger.LogInformation($"Trigger:{trigger.Name} triggered by {messageInfo.UserName} with {messageInfo.Bits} bits");
@@ -176,13 +219,13 @@ namespace CHAI
 
                             break;
                         case var p when p.Contains("PONG"):
-                            _logger.LogInformation(p);
+                            _logger.LogInformation("PONG");
                             break;
                         case var r when r.Contains("RECONNECT"):
                             _logger.LogWarning(r);
-                            Stop();
                             break;
                         default:
+                            _logger.LogInformation(message);
                             break;
                     }
                 }

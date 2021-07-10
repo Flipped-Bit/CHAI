@@ -112,9 +112,19 @@ namespace CHAI.Views
         }
 
         /// <summary>
+        /// Gets or sets a <see cref="ChatListener"/> for the <see cref="MainWindow"/>.
+        /// </summary>
+        public ChatListener ChatListener { get; set; }
+
+        /// <summary>
         /// Gets or sets a <see cref="IrcClient"/> for the <see cref="MainWindow"/>.
         /// </summary>
         public IrcClient IrcClient { get; set; }
+
+        /// <summary>
+        /// Gets or sets a <see cref="PingSender"/> for the <see cref="MainWindow"/>.
+        /// </summary>
+        public PingSender PingSender { get; set; }
 
         /// <summary>
         /// Gets or sets the selected <see cref="Setting"/>.
@@ -169,6 +179,16 @@ namespace CHAI.Views
                 CreateIRCClient(Settings.Username.ToLower());
                 if (IrcClient != null)
                 {
+                    if (ChatListener != null)
+                    {
+                        ChatListener.Stop();
+                    }
+
+                    if (PingSender != null)
+                    {
+                        PingSender.Stop();
+                    }
+
                     StartIRCConnection();
                     ChatConnectedState.Text = "Chat connected";
                     ChatConnectedState.Foreground = Brushes.Green;
@@ -300,6 +320,40 @@ namespace CHAI.Views
                 _context.SaveChanges();
                 UpdateTriggersList();
             }
+        }
+
+        /// <summary>
+        /// Method for validating that input value is a number.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="DurationValueLostFocus"/> event.</param>
+        /// <param name="e">Arguments from <see cref="DurationValueLostFocus"/> event.</param>
+        private void DurationValueLostFocus(object sender, RoutedEventArgs e)
+        {
+            DurationValue.Text = Regex.Match(DurationValue.Text, NUMBERONLYREGEX, RegexOptions.IgnoreCase).Success ?
+                DurationValue.Text : "0";
+        }
+
+        /// <summary>
+        /// Method for decreasing <see cref="DurationValue"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="DurationValueMinusClick"/> event.</param>
+        /// <param name="e">Arguments from <see cref="DurationValueMinusClick"/> event.</param>
+        private void DurationValueMinusClick(object sender, RoutedEventArgs e)
+        {
+            var currentValue = ((Trigger)TriggersList.SelectedItem).Duration;
+            ((Trigger)TriggersList.SelectedItem).Duration = currentValue > 0 ? currentValue -= 1 : 0;
+            DurationValue.Text = Convert.ToString(((Trigger)TriggersList.SelectedItem).Duration);
+        }
+
+        /// <summary>
+        /// Method for increasing <see cref="DurationValue"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="DurationValuePlusClick"/> event.</param>
+        /// <param name="e">Arguments from <see cref="DurationValuePlusClick"/> event.</param>
+        private void DurationValuePlusClick(object sender, RoutedEventArgs e)
+        {
+            ((Trigger)TriggersList.SelectedItem).Duration += 1;
+            DurationValue.Text = Convert.ToString(((Trigger)TriggersList.SelectedItem).Duration);
         }
 
         /// <summary>
@@ -513,15 +567,15 @@ namespace CHAI.Views
         private void StartIRCConnection()
         {
             // Ping to the server to make sure the bot stays connected
-            PingSender ping = new PingSender(_pingLogger, IrcClient);
-            ping.Start();
+            PingSender = new PingSender(_pingLogger, IrcClient);
+            PingSender.Start();
 
             var triggers = _context.Triggers.ToList();
 
             // Listen to the chat
-            ChatListener chatListener = new ChatListener(_chatlistenerLogger, _processManagerLogger, Settings, triggers, IrcClient, Settings.Username.ToLower());
-            chatListener.Start();
-            chatListener.StartLogging();
+            ChatListener = new ChatListener(_chatlistenerLogger, _processManagerLogger, Settings, triggers, IrcClient, Settings.Username.ToLower());
+            ChatListener.Start();
+            ChatListener.StartLogging();
         }
 
         /// <summary>

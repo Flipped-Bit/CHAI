@@ -40,34 +40,38 @@ namespace CHAI.Models
             CooldownUnit = (TimeSpanUnit)triggerDTO.CooldownUnit + 1;
             LastTriggered = triggerDTO.LastTriggered;
             RewardName = triggerDTO.RewardName;
+            HasDeactivationTime = triggerDTO.HasDeactivationTime;
+            DeactivateAt = triggerDTO.DeactivateAt;
+            Duration = triggerDTO.Duration;
+            DurationUnit = triggerDTO.DurationUnit;
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="Id"/> that uniquely identifies this <see cref="Trigger" /> instance.
+        /// Gets or sets the <see cref="Id"/> that uniquely identifies this <see cref="Trigger"/> instance.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="Name"/> of this <see cref="Trigger" /> instance.
+        /// Gets or sets the <see cref="Name"/> of this <see cref="Trigger"/> instance.
         /// </summary>
         [MaxLength]
         [Required]
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="DateTime"/> that this <see cref="Trigger" /> instance was <see cref="CreatedAt"/>.
+        /// Gets or sets the <see cref="DateTime"/> that this <see cref="Trigger"/> instance was <see cref="CreatedAt"/>.
         /// </summary>
         [Required]
         public DateTime CreatedAt { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the <see cref="Trigger" /> instance has <see cref="BitsEnabled"/>.
+        /// Gets or sets a value indicating whether the <see cref="Trigger"/> instance has <see cref="BitsEnabled"/>.
         /// </summary>
         [Required]
         public bool BitsEnabled { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets the <see cref="BitsCondition"/> for this <see cref="Trigger" /> instance.
+        /// Gets or sets the <see cref="BitsCondition"/> for this <see cref="Trigger"/> instance.
         /// </summary>
         [Required]
         public BitsCondition BitsCondition { get; set; }
@@ -85,25 +89,25 @@ namespace CHAI.Models
         public int MaximumBits { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the <see cref="Trigger" /> instance can be triggered by Evewryone.
+        /// Gets or sets a value indicating whether the <see cref="Trigger"/> instance can be triggered by Evewryone.
         /// </summary>
         [Required]
         public bool UserLevelEveryone { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the <see cref="Trigger" /> instance can be triggered by Subscribers.
+        /// Gets or sets a value indicating whether the <see cref="Trigger"/> instance can be triggered by Subscribers.
         /// </summary>
         [Required]
         public bool UserLevelSubs { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the <see cref="Trigger" /> instance can be triggered by VIPs.
+        /// Gets or sets a value indicating whether the <see cref="Trigger"/> instance can be triggered by VIPs.
         /// </summary>
         [Required]
         public bool UserLevelVips { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the <see cref="Trigger" /> instance can be triggered by Mods.
+        /// Gets or sets a value indicating whether the <see cref="Trigger"/> instance can be triggered by Mods.
         /// </summary>
         [Required]
         public bool UserLevelMods { get; set; } = false;
@@ -133,20 +137,43 @@ namespace CHAI.Models
         public int Cooldown { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="CooldownUnit"/> for this <see cref="Trigger" /> instance.
+        /// Gets or sets the <see cref="CooldownUnit"/> for this <see cref="Trigger"/> instance.
         /// </summary>
         [Required]
         public TimeSpanUnit CooldownUnit { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="DateTime"/> that this <see cref="Trigger" /> instance was <see cref="LastTriggered"/>.
+        /// Gets or sets the <see cref="DateTime"/> that this <see cref="Trigger"/> instance was <see cref="LastTriggered"/>.
         /// </summary>
         public DateTime LastTriggered { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="RewardName"/> used to trigger this <see cref="Trigger" /> instance.
+        /// Gets or sets the <see cref="RewardName"/> used to trigger this <see cref="Trigger"/> instance.
         /// </summary>
         [MaxLength(45)]
         public string RewardName { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the <see cref="Trigger"/> instance has <see cref="HasDeactivationTime"/>.
+        /// </summary>
+        [Required]
+        public bool HasDeactivationTime { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets the <see cref="DateTime"/> that this <see cref="Trigger"/> instance is going to be deactivated at.
+        /// </summary>
+        public DateTime? DeactivateAt { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the <see cref="Duration"/> interval for this <see cref="Trigger"/> instance.
+        /// </summary>
+        [Required]
+        public int Duration { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DurationUnit"/> for this <see cref="Trigger"/> instance.
+        /// </summary>
+        [Required]
+        public TimeSpanUnit DurationUnit { get; set; }
     }
 }

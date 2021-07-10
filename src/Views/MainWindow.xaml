@@ -6,7 +6,7 @@
         xmlns:cnv="clr-namespace:CHAI.Converters"
         xmlns:col="clr-namespace:CHAI.Models.Collections"
         mc:Ignorable="d"
-        Title="Character Animator Integrator" Height="500" Width="950">
+        Title="Character Animator Integrator" Height="525" Width="950">
     <Grid Name="MainGrid" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15"></ColumnDefinition>
@@ -24,10 +24,10 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="15"></RowDefinition>
-            <RowDefinition Height="377"></RowDefinition>
+            <RowDefinition Height="405"></RowDefinition>
             <RowDefinition Height="6"></RowDefinition>
             <RowDefinition Height="43"></RowDefinition>
-            <RowDefinition Height="26"></RowDefinition>
+            <RowDefinition Height="15"></RowDefinition>
         </Grid.RowDefinitions>
         <DataGrid HeadersVisibility="Column" Name="TriggersList" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
                   Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" ColumnWidth="*" IsSynchronizedWithCurrentItem="True" SelectionChanged="TriggersListSelectionChanged">
@@ -46,7 +46,7 @@
         <Button Grid.Column="3" Grid.Row="3" Content="+" Click="CreateTrigger"/>
         <TabControl Grid.Column="5" Grid.ColumnSpan="8" Grid.Row="1">
             <TabItem Name="DetailsTab" Header="Details">
-                <Grid Name="DetailsGrid" Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Height="349" Width="677" Margin="0,0,2,1">
+                <Grid Name="DetailsGrid" Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Height="375" Width="677">
                     <Grid.Resources>
                         <cnv:CSVStringToListOfStringsConverter x:Key="CSVStringToListOfStringsConverter"/>
                         <cnv:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
@@ -69,7 +69,7 @@
                         <ColumnDefinition Width="22"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="20"></RowDefinition>
                         <RowDefinition Height="25"></RowDefinition>
                         <RowDefinition Height="20"></RowDefinition>
                         <RowDefinition Height="25"></RowDefinition>
@@ -81,7 +81,9 @@
                         <RowDefinition Height="25"></RowDefinition>
                         <RowDefinition Height="25"></RowDefinition>
                         <RowDefinition Height="45"></RowDefinition>
-                        <RowDefinition Height="38"></RowDefinition>
+                        <RowDefinition Height="20"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="29"></RowDefinition>
                     </Grid.RowDefinitions>
 
                     <Label Grid.Column="1" Grid.Row="1" Content="Name" FontSize="12"/>
@@ -127,7 +129,7 @@
                         <Button x:Name="CooldownValueMinus" x:FieldModifier="private" FontSize="10" Padding="0,-1,0,0" Content="▼" Height="13" Width="13" Margin="61,12,0,0" Click="CooldownValueMinusClick"/>
                     </Grid>
                     <ComboBox Name="CooldownUnits" Grid.Column="4" Grid.ColumnSpan="2" Grid.Row="9" Margin="0,0,20,0" FontSize="11" ItemsSource="{StaticResource CooldownUnits}" 
-                              SelectedValuePath="Value" DisplayMemberPath="Key"  SelectedItem="{Binding SelectedItem.CooldownUnit, Converter={StaticResource EnumToStringConverter}, ElementName=TriggersList}"/> 
+                              SelectedValuePath="Value" DisplayMemberPath="Key"  SelectedItem="{Binding SelectedItem.CooldownUnit, Converter={StaticResource EnumToStringConverter}, ElementName=TriggersList}"/>
                     <Label Grid.Column="6" Grid.ColumnSpan="2" Grid.Row="9" Content="Last Triggered:"  FontSize="9"/>
                     <TextBlock Name="LastTriggered" Grid.Column="7" Grid.ColumnSpan="2" Grid.Row="9" Margin="25,5,0,0" FontSize="9" Text="{Binding SelectedItem.LastTriggered, Converter={StaticResource DateTimeToStringConverter}, ElementName=TriggersList}"/>
 
@@ -136,9 +138,19 @@
                     <Label Grid.Column="1" Grid.Row="11" Content="Keystroke&#10;Trigger" FontSize="12"/>
                     <Button Name="RecordKeyBtn" Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="11" Margin="3,1,6,13" Content="Record" Click="RecordKeyBtnClick"/>
                     <TextBlock Name="KeyValue" Grid.Column="5" Grid.Row="11" Margin="16,0,16,11" FontSize="10" Text="{Binding SelectedItem.CharAnimTriggerKeyChar, ElementName=TriggersList}" VerticalAlignment="Center"/>
-                    <TextBlock Name="HasUnsavedChanges" Grid.Column="9" Grid.ColumnSpan="2" Grid.Row="11" Margin="15,9,0,8" Text="" FontSize="9"/>
+                    <TextBlock Name="HasUnsavedChanges" Grid.Column="9" Grid.ColumnSpan="2" Grid.Row="12" Margin="0,0,6,0" Text="" FontSize="9" Width="105" Height="28"/>
 
-                    <Button Name="SaveChangesBtn" Grid.Column="9" Grid.ColumnSpan="2" Grid.Row="11" Grid.RowSpan="2" Margin="3,33,10,19" Content="Save" Click="SaveChangesBtnClick"/>
+                    <Label Grid.Column="1" Grid.Row="13" Content="Duration" FontSize="12"/>
+                    <CheckBox Name="HasDeactivationTime" Grid.Column="2" Grid.Row="13" Margin="3,5,3,0" IsChecked="{Binding SelectedItem.HasDeactivationTime, ElementName=TriggersList}"/>
+                    <ComboBox Name="DurationUnits" Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="13" Margin="0,0,6,0" Height="25" VerticalAlignment="Top" ItemsSource="{StaticResource CooldownUnits}" 
+                              SelectedValuePath="Value" DisplayMemberPath="Key" SelectedItem="{Binding SelectedItem.DurationUnit, Converter={StaticResource EnumToStringConverter}, ElementName=TriggersList}"/>
+                    <Grid Name="DurationTimeSelector" Grid.Column="5" Grid.Row="13" VerticalAlignment="Top" Width="64" Margin="0,0,6,0">
+                        <TextBox x:Name="DurationValue" x:FieldModifier="private" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="{Binding SelectedItem.Duration, ElementName=TriggersList}" LostFocus="DurationValueLostFocus"/>
+                        <Button x:Name="DurationValuePlus" x:FieldModifier="private" FontSize="10" Padding="0,-3,0,0" Content="▲" Height="13" Width="13" Margin="51,0,0,13" Click="DurationValuePlusClick"/>
+                        <Button x:Name="DurationValueMinus" x:FieldModifier="private" FontSize="10" Padding="0,-1,0,0" Content="▼" Height="13" Width="13" Margin="51,12,0,0" Click="DurationValueMinusClick"/>
+                    </Grid>
+
+                    <Button Name="SaveChangesBtn" Grid.Column="9" Grid.ColumnSpan="2" Grid.Row="13" Grid.RowSpan="2" Margin="3,13,10,10" Content="Save" Click="SaveChangesBtnClick" Width="107" Height="31"/>
                 </Grid>
             </TabItem>
         </TabControl>
