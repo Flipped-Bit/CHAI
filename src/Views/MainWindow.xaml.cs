@@ -303,6 +303,40 @@ namespace CHAI.Views
         }
 
         /// <summary>
+        /// Method for validating that input value is a number.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="DurationValueLostFocus"/> event.</param>
+        /// <param name="e">Arguments from <see cref="DurationValueLostFocus"/> event.</param>
+        private void DurationValueLostFocus(object sender, RoutedEventArgs e)
+        {
+            DurationValue.Text = Regex.Match(DurationValue.Text, NUMBERONLYREGEX, RegexOptions.IgnoreCase).Success ?
+                DurationValue.Text : "0";
+        }
+
+        /// <summary>
+        /// Method for decreasing <see cref="DurationValue"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="DurationValueMinusClick"/> event.</param>
+        /// <param name="e">Arguments from <see cref="DurationValueMinusClick"/> event.</param>
+        private void DurationValueMinusClick(object sender, RoutedEventArgs e)
+        {
+            var currentValue = ((Trigger)TriggersList.SelectedItem).Duration;
+            ((Trigger)TriggersList.SelectedItem).Duration = currentValue > 0 ? currentValue -= 1 : 0;
+            DurationValue.Text = Convert.ToString(((Trigger)TriggersList.SelectedItem).Duration);
+        }
+
+        /// <summary>
+        /// Method for increasing <see cref="DurationValue"/>.
+        /// </summary>
+        /// <param name="sender">The sender of <see cref="DurationValuePlusClick"/> event.</param>
+        /// <param name="e">Arguments from <see cref="DurationValuePlusClick"/> event.</param>
+        private void DurationValuePlusClick(object sender, RoutedEventArgs e)
+        {
+            ((Trigger)TriggersList.SelectedItem).Duration += 1;
+            DurationValue.Text = Convert.ToString(((Trigger)TriggersList.SelectedItem).Duration);
+        }
+
+        /// <summary>
         /// Method for saving Key Press events.
         /// </summary>
         /// <param name="sender">The sender of <see cref="KeyDown"/> event.</param>
