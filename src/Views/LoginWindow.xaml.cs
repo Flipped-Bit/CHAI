@@ -40,7 +40,6 @@ namespace CHAI.Views
             Browser.CoreWebView2InitializationCompleted += BrowserInitializationCompleted;
             Browser.Source = GenerateOauthUrl();
             DataContext = Owner;
-            _loginWindowLogger.LogInformation("Page loaded successfully");
         }
 
         /// <summary>
@@ -85,7 +84,6 @@ namespace CHAI.Views
                 $"client_id={ClientData.Get("Id")}",
                 $"redirect_uri={Endpoints.Get("Redirect")}",
                 $"scope={Scopes.Get("Bits")}"));
-            _loginWindowLogger.LogInformation($"URL Generated: {url}");
             return url;
         }
 
@@ -99,7 +97,6 @@ namespace CHAI.Views
             var header = "#access_token=";
             var headerIndex = url.IndexOf(header) + header.Length;
             var token = url[headerIndex..url.IndexOf("&")];
-            _loginWindowLogger.LogInformation($"Token: {token} generated");
             return token;
         }
 

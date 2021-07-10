@@ -108,7 +108,6 @@ namespace CHAI.Views
             var window = GetWindow(this);
             window.KeyDown += KeyDown;
             Closing += MainWindowClosing;
-            _mainWindowlogger.LogInformation("Main window initialised successfully");
         }
 
         /// <summary>
