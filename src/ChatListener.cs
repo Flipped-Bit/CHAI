@@ -83,7 +83,6 @@ namespace CHAI
 
             var eventService = new EventService(_logger, _processManagerLogger, _settings);
             eventService.Start();
-            _logger.LogInformation("Event service started");
 
             while (IsActive)
             {
