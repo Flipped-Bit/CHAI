@@ -112,9 +112,19 @@ namespace CHAI.Views
         }
 
         /// <summary>
+        /// Gets or sets a <see cref="ChatListener"/> for the <see cref="MainWindow"/>.
+        /// </summary>
+        public ChatListener ChatListener { get; set; }
+
+        /// <summary>
         /// Gets or sets a <see cref="IrcClient"/> for the <see cref="MainWindow"/>.
         /// </summary>
         public IrcClient IrcClient { get; set; }
+
+        /// <summary>
+        /// Gets or sets a <see cref="PingSender"/> for the <see cref="MainWindow"/>.
+        /// </summary>
+        public PingSender PingSender { get; set; }
 
         /// <summary>
         /// Gets or sets the selected <see cref="Setting"/>.
@@ -169,6 +179,16 @@ namespace CHAI.Views
                 CreateIRCClient(Settings.Username.ToLower());
                 if (IrcClient != null)
                 {
+                    if (ChatListener != null)
+                    {
+                        ChatListener.Stop();
+                    }
+
+                    if (PingSender != null)
+                    {
+                        PingSender.Stop();
+                    }
+
                     StartIRCConnection();
                     ChatConnectedState.Text = "Chat connected";
                     ChatConnectedState.Foreground = Brushes.Green;
@@ -547,15 +567,15 @@ namespace CHAI.Views
         private void StartIRCConnection()
         {
             // Ping to the server to make sure the bot stays connected
-            PingSender ping = new PingSender(_pingLogger, IrcClient);
-            ping.Start();
+            PingSender = new PingSender(_pingLogger, IrcClient);
+            PingSender.Start();
 
             var triggers = _context.Triggers.ToList();
 
             // Listen to the chat
-            ChatListener chatListener = new ChatListener(_chatlistenerLogger, _processManagerLogger, Settings, triggers, IrcClient, Settings.Username.ToLower());
-            chatListener.Start();
-            chatListener.StartLogging();
+            ChatListener = new ChatListener(_chatlistenerLogger, _processManagerLogger, Settings, triggers, IrcClient, Settings.Username.ToLower());
+            ChatListener.Start();
+            ChatListener.StartLogging();
         }
 
         /// <summary>
