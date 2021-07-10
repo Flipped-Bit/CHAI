@@ -151,7 +151,9 @@ namespace CHAI.Views
         /// </summary>
         public void RefreshConnectedApplication()
         {
-            Settings = _context.Settings.FirstOrDefault();
+            Settings = _context.Settings
+                .OrderBy(s => s.Id)
+                .FirstOrDefault();
             if (Settings != null)
             {
                 HasActiveProcess = ProcessManager.ProcessRunning(Settings.Application);
