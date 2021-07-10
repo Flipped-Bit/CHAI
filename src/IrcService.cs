@@ -22,7 +22,7 @@ namespace CHAI
         /// <summary>
         /// The Injected <see cref="ILogger{IrcService}"/>.
         /// </summary>
-        private readonly ILogger _logger;
+        protected readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcService"/> class.

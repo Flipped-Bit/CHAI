@@ -18,7 +18,7 @@ namespace CHAI
         /// <summary>
         /// The injected <see cref="ILogger{ChatListener}"/>.
         /// </summary>
-        private readonly ILogger _logger;
+        private new readonly ILogger _logger;
 
         /// <summary>
         /// The Injected <see cref="ILogger{ProcessManager}"/>.
@@ -229,6 +229,17 @@ namespace CHAI
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Method to Start the <see cref="Thread"/>.
+        /// </summary>
+        public new void Start()
+        {
+            IsActive = true;
+            thread.IsBackground = true;
+            thread.Start();
+            _logger.LogInformation("Chat Listener started successfully");
         }
 
         /// <summary>

@@ -13,6 +13,11 @@ namespace CHAI
     public class PingSender : IrcService
     {
         /// <summary>
+        /// The injected <see cref="ILogger{PingSender}"/>.
+        /// </summary>
+        private new readonly ILogger _logger;
+
+        /// <summary>
         /// The <see cref="Timer"/>.
         /// </summary>
         protected Timer timer;
@@ -26,6 +31,7 @@ namespace CHAI
             : base(logger)
         {
             _ircClient = ircClient;
+            _logger = logger;
             thread = new Thread(new ThreadStart(Run));
             timer = new Timer
             {
@@ -41,6 +47,17 @@ namespace CHAI
         {
             timer.Elapsed += SendPing;
             timer.Enabled = true;
+        }
+
+        /// <summary>
+        /// Method to Start the <see cref="Thread"/>.
+        /// </summary>
+        public new void Start()
+        {
+            IsActive = true;
+            thread.IsBackground = true;
+            thread.Start();
+            _logger.LogInformation("Ping Sender started successfully");
         }
 
         /// <summary>
