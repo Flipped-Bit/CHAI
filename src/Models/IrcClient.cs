@@ -72,7 +72,14 @@ namespace CHAI.Models
             {
                 OutputStream.WriteLine(message);
                 OutputStream.Flush();
-                Logger.LogInformation($"Message: \"{message}\" sent successfully");
+                if (message == "PING irc.twitch.tv")
+                {
+                    Logger.LogInformation("PING");
+                }
+                else
+                {
+                    Logger.LogInformation($"Message: \"{message}\" sent successfully");
+                }
             }
             catch (Exception ex)
             {
