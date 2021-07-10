@@ -181,7 +181,6 @@ namespace CHAI
                                             context.RemoveRange(eventsToRemove);
 
                                             _logger.LogInformation($"Event {(context.SaveChanges() > 0 ? "removed successfully" : "removal failed")}");
-
                                         }
                                         else
                                         {
@@ -217,6 +216,7 @@ namespace CHAI
                                     }
                                 }
                             }
+
                             break;
                         case var p when p.Contains("PONG"):
                             _logger.LogInformation("PONG");
