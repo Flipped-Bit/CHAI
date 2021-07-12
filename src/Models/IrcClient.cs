@@ -22,23 +22,46 @@ namespace CHAI.Models
         public IrcClient(ILogger logger, string ip, int port, string userName, string password, string channel)
         {
             Logger = logger;
+            var hasConnected = false;
             try
             {
-                TcpClient = new TcpClient(ip, port);
-                InputStream = new StreamReader(TcpClient.GetStream());
-                OutputStream = new StreamWriter(TcpClient.GetStream());
+                while (!hasConnected)
+                {
+                    TcpClient = new TcpClient(ip, port);
+                    InputStream = new StreamReader(TcpClient.GetStream());
+                    OutputStream = new StreamWriter(TcpClient.GetStream());
 
-                OutputStream.WriteLine("PASS " + password);
-                OutputStream.WriteLine("NICK " + userName);
-                OutputStream.WriteLine("USER " + userName + " 8 * :" + userName);
-                OutputStream.WriteLine("CAP REQ :twitch.tv/tags");
-                OutputStream.WriteLine("JOIN #" + channel);
-                OutputStream.Flush();
-                Logger.LogInformation("IRC Client Initialised successfully.");
+                    OutputStream.WriteLine("PASS " + password);
+                    OutputStream.WriteLine("NICK " + userName);
+                    OutputStream.WriteLine("USER " + userName + " 8 * :" + userName);
+                    OutputStream.WriteLine("CAP REQ :twitch.tv/tags");
+                    OutputStream.WriteLine("JOIN #" + channel);
+                    OutputStream.Flush();
+
+                    // Check connection is live
+                    var response = string.Empty;
+                    try
+                    {
+                        while (string.IsNullOrWhiteSpace(response))
+                        {
+                            response = InputStream.ReadLine();
+                        }
+                        Logger.LogInformation($"Received message: {response}");
+                        hasConnected = true;
+                    }
+                    catch (IOException ioEx)
+                    {
+                        Logger.LogError("Error receiving message: " + ioEx.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError("Error receiving message: " + ex.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+                logger.LogError($"IRC Client failed to initialise: {ex.Message}");
             }
         }
 
@@ -97,10 +120,15 @@ namespace CHAI.Models
             {
                 return InputStream.ReadLine();
             }
+            catch (IOException ioEx)
+            {
+                Logger.LogError("Error receiving message: " + ioEx.Message);
+                return string.Empty;
+            }
             catch (Exception ex)
             {
                 Logger.LogError("Error receiving message: " + ex.Message);
-                return "Error receiving message: " + ex.Message;
+                return string.Empty;
             }
         }
     }
