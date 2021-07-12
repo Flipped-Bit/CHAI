@@ -175,6 +175,9 @@ namespace CHAI
 
                                         if (isActive)
                                         {
+                                            context = new CHAIDbContextFactory()
+                                                .CreateDbContext(null);
+
                                             // remove follow up event for deactivation from queue
                                             var eventsToRemove = context.EventQueue.Where(e => e.TriggerId == trigger.Id);
                                             context.RemoveRange(eventsToRemove);
