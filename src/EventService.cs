@@ -138,22 +138,24 @@ namespace CHAI
 
         private void DequeueEvent(QueuedEvent triggeredEvent)
         {
-            var context = new CHAIDbContextFactory()
-                .CreateDbContext(null);
-            context.Remove(triggeredEvent);
             var saved = false;
             while (!saved)
             {
                 try
                 {
+                    var context = new CHAIDbContextFactory()
+                        .CreateDbContext(null);
+                    context.Remove(triggeredEvent);
+
                     // Attempt to save changes to the database
                     _logger.LogInformation($"Event {(context.SaveChanges() > 0 ? "removed successfully" : "removal failed")}");
                     saved = true;
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    var entry = ex.Entries.FirstOrDefault();
-                    _logger.LogError($"Entity {entry.Entity} not removed: {ex.Message}");
+                    var entity = ex.Entries.FirstOrDefault().Entity is QueuedEvent ?
+                        ex.Entries.FirstOrDefault().Entity as QueuedEvent : default;
+                    _logger.LogError($"Entity {entity} not removed: {ex.Message}");
                 }
                 catch (Exception exc)
                 {
