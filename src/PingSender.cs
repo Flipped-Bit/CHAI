@@ -13,14 +13,14 @@ namespace CHAI
     public class PingSender : IrcService
     {
         /// <summary>
-        /// The injected <see cref="ILogger{PingSender}"/>.
-        /// </summary>
-        private new readonly ILogger _logger;
-
-        /// <summary>
         /// The <see cref="Timer"/>.
         /// </summary>
         protected Timer timer;
+
+        /// <summary>
+        /// The injected <see cref="ILogger{PingSender}"/>.
+        /// </summary>
+        private new readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PingSender"/> class.
