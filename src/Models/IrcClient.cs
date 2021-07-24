@@ -46,6 +46,7 @@ namespace CHAI.Models
                         {
                             response = InputStream.ReadLine();
                         }
+
                         Logger.LogInformation($"Received message: {response}");
                         hasConnected = true;
                     }
