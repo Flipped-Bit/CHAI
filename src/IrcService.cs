@@ -10,6 +10,11 @@ namespace CHAI
     public class IrcService
     {
         /// <summary>
+        /// The Injected <see cref="ILogger{IrcService}"/>.
+        /// </summary>
+        protected readonly ILogger _logger;
+
+        /// <summary>
         /// The <see cref="IrcClient"/>.
         /// </summary>
         protected IrcClient _ircClient;
@@ -18,11 +23,6 @@ namespace CHAI
         /// The <see cref="Thread"/>.
         /// </summary>
         protected Thread thread;
-
-        /// <summary>
-        /// The Injected <see cref="ILogger{IrcService}"/>.
-        /// </summary>
-        protected readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcService"/> class.

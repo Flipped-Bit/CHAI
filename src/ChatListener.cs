@@ -20,11 +20,6 @@ namespace CHAI
         /// </summary>
         private new readonly ILogger _logger;
 
-        /// <summary>
-        /// The Injected <see cref="ILogger{ProcessManager}"/>.
-        /// </summary>
-        private readonly ILogger _processManagerLogger;
-
         private readonly List<Trigger> _triggers;
 
         private readonly Setting _settings;
@@ -38,16 +33,14 @@ namespace CHAI
         /// Initializes a new instance of the <see cref="ChatListener"/> class.
         /// </summary>
         /// <param name="logger">The injected <see cref="ILogger"/>.</param>
-        /// <param name="processManagerLogger">The Injected <see cref="ILogger{ProcessManager}"/>.</param>
         /// <param name="settings">The current <see cref="Setting"/>.</param>
         /// <param name="triggers">List of available <see cref="Trigger"/>s.</param>
         /// <param name="ircClient">The configured IRC Client.</param>
         /// <param name="channel">The channel the <see cref="IrcClient"/> is connected to/>.</param>
-        public ChatListener(ILogger logger, ILogger processManagerLogger, Setting settings, List<Trigger> triggers, IrcClient ircClient, string channel)
+        public ChatListener(ILogger logger, Setting settings, List<Trigger> triggers, IrcClient ircClient, string channel)
             : base(logger)
         {
             _channel = channel;
-            _processManagerLogger = processManagerLogger;
             _settings = settings;
             _triggers = triggers;
             _ircClient = ircClient;
@@ -78,12 +71,6 @@ namespace CHAI
         /// </summary>
         public override void Run()
         {
-            Dictionary<int, bool> stateDictionary =
-               _triggers.ToDictionary(t => t.Id, t => false);
-
-            var eventService = new EventService(_logger, _processManagerLogger, _settings);
-            eventService.Start();
-
             while (IsActive)
             {
                 string message = _ircClient.ReadMessage();
@@ -171,7 +158,12 @@ namespace CHAI
 
                                     if (trigger.HasDeactivationTime && trigger.Duration >= 1 && trigger.DurationUnit != TimeSpanUnit.None)
                                     {
-                                        var isActive = stateDictionary[trigger.Id];
+                                        context = new CHAIDbContextFactory()
+                                            .CreateDbContext(null);
+
+                                        // Check if event already in queue
+                                        var isActive = context.EventQueue
+                                            .Any(e => e.TriggerId == trigger.Id && e.TriggeredAt != trigger.LastTriggered);
 
                                         if (isActive)
                                         {
@@ -179,7 +171,8 @@ namespace CHAI
                                                 .CreateDbContext(null);
 
                                             // remove follow up event for deactivation from queue
-                                            var eventsToRemove = context.EventQueue.Where(e => e.TriggerId == trigger.Id);
+                                            var eventsToRemove = context.EventQueue
+                                                .Where(e => e.TriggerId == trigger.Id && e.TriggeredAt != trigger.LastTriggered);
                                             context.RemoveRange(eventsToRemove);
 
                                             _logger.LogInformation($"Event {(context.SaveChanges() > 0 ? "removed successfully" : "removal failed")}");
@@ -208,8 +201,6 @@ namespace CHAI
 
                                             _logger.LogInformation($"Event {(context.SaveChanges() > 0 ? "added successfully" : "adding failed")}");
                                         }
-
-                                        stateDictionary[trigger.Id] = !stateDictionary[trigger.Id];
                                     }
 
                                     if (_settings.LoggingEnabled)

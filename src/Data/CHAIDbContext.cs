@@ -57,6 +57,10 @@ namespace CHAI.Data
             modelBuilder.Entity<Trigger>()
                 .Property(trigger => trigger.CooldownUnit)
                 .HasConversion<int>();
+
+            modelBuilder.Entity<Trigger>()
+                 .Property(trigger => trigger.DurationUnit)
+                 .HasConversion<int>();
         }
 
         private Setting[] GetSeededSettings()

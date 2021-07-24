@@ -42,7 +42,7 @@ namespace CHAI
             var serilogLogger = new LoggerConfiguration()
             .WriteTo.File(
                 Path.Join(APPDATAFOLDER, "CHAI", "Logs", $"{DateTime.Now:dd-MM-yyyy}.log"),
-                LogEventLevel.Verbose,
+                LogEventLevel.Information,
                 outputTemplate: "[{SourceContext}] {Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
             .WriteTo.Debug(LogEventLevel.Information, outputTemplate: "[{SourceContext}] {Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
