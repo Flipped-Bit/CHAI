@@ -43,6 +43,11 @@ namespace CHAI.Views
         private readonly ILogger _chatlistenerLogger;
 
         /// <summary>
+        /// The injected <see cref="ILogger{EventService}"/>.
+        /// </summary>
+        private readonly ILogger _eventServiceLogger;
+
+        /// <summary>
         /// The injected <see cref="ILogger{IrcService}"/>.
         /// </summary>
         private readonly ILogger _ircLogger;
@@ -77,6 +82,7 @@ namespace CHAI.Views
         /// </summary>
         /// <param name="context">The injected <see cref="CHAIDbContext"/>.</param>
         /// <param name="chatListenerLogger">The injected <see cref="ILogger"/> for <see cref="ChatListener"/>.</param>
+        /// <param name="eventServiceLogger">The injected <see cref="ILogger"/> for <see cref="EventService"/>.</param>
         /// <param name="loginLogger">The injected <see cref="ILogger"/> for <see cref="LoginWindow"/>.</param>
         /// <param name="ircLogger">The injected <see cref="ILogger{IrcService}"/>.</param>
         /// <param name="mainLogger">The injected <see cref="ILogger"/>.</param>
@@ -86,6 +92,7 @@ namespace CHAI.Views
         public MainWindow(
             CHAIDbContext context,
             ILogger<ChatListener> chatListenerLogger,
+            ILogger<EventService> eventServiceLogger,
             ILogger<IrcService> ircLogger,
             ILogger<LoginWindow> loginLogger,
             ILogger<MainWindow> mainLogger,
@@ -95,6 +102,7 @@ namespace CHAI.Views
         {
             _context = context;
             _chatlistenerLogger = chatListenerLogger;
+            _eventServiceLogger = eventServiceLogger;
             _ircLogger = ircLogger;
             _loginWindowLogger = loginLogger;
             _mainWindowlogger = mainLogger;
@@ -103,6 +111,7 @@ namespace CHAI.Views
             _settingsWindowLogger = settingsLogger;
             InitializeComponent();
             RefreshConnectedApplication();
+            StartEventService();
             RefreshIRC();
             UpdateTriggersList();
             var window = GetWindow(this);
@@ -114,6 +123,11 @@ namespace CHAI.Views
         /// Gets or sets a <see cref="ChatListener"/> for the <see cref="MainWindow"/>.
         /// </summary>
         public ChatListener ChatListener { get; set; }
+
+        /// <summary>
+        /// Gets or sets a <see cref="EventService"/> for the <see cref="MainWindow"/>.
+        /// </summary>
+        public EventService EventService { get; set; }
 
         /// <summary>
         /// Gets or sets a <see cref="IrcClient"/> for the <see cref="MainWindow"/>.
@@ -191,7 +205,7 @@ namespace CHAI.Views
                     }
 
                     StartIRCConnection();
-                    ChatConnectedState.Text = "Chat connected";
+                    ChatConnectedState.Text = $"Chat connected{Environment.NewLine}({Settings.Username})";
                     ChatConnectedState.Foreground = Brushes.Green;
                 }
                 else
@@ -213,6 +227,12 @@ namespace CHAI.Views
         public void UpdateTriggersList()
         {
             TriggersList.ItemsSource = _context.Triggers.ToList();
+        }
+
+        private void StartEventService()
+        {
+            EventService = new EventService(_eventServiceLogger, _processManagerLogger, Settings);
+            EventService.Start();
         }
 
         /// <summary>
@@ -574,7 +594,7 @@ namespace CHAI.Views
             var triggers = _context.Triggers.ToList();
 
             // Listen to the chat
-            ChatListener = new ChatListener(_chatlistenerLogger, _processManagerLogger, Settings, triggers, IrcClient, Settings.Username.ToLower());
+            ChatListener = new ChatListener(_chatlistenerLogger, Settings, triggers, IrcClient, Settings.Username.ToLower());
             ChatListener.Start();
             ChatListener.StartLogging();
         }

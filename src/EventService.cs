@@ -153,9 +153,17 @@ namespace CHAI
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    var entity = ex.Entries.FirstOrDefault().Entity is QueuedEvent ?
-                        ex.Entries.FirstOrDefault().Entity as QueuedEvent : default;
-                    _logger.LogError($"Entity {entity} not removed: {ex.Message}");
+                    if (ex.Message.Contains("Database operation expected to affect 1 row(s) but actually affected 0 row(s)."))
+                    {
+                        // Entity already removed
+                        saved = true;
+                    }
+                    else
+                    {
+                        var entity = ex.Entries.FirstOrDefault().Entity is QueuedEvent ?
+                            ex.Entries.FirstOrDefault().Entity as QueuedEvent : default;
+                        _logger.LogError($"Entity {entity} not removed: {ex.Message}");
+                    }
                 }
                 catch (Exception exc)
                 {
