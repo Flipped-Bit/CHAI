@@ -10,7 +10,7 @@ on:
 env:
   PROJECT_PATH: src/CHAI.csproj
   CONFIG_PATH: src/app.config
-  APP_CONFIG: ${{ secrets.APP_CONFIG }}
+  APP_CONFIG: ${{ secrets.APP_CONFIG_V2 }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
