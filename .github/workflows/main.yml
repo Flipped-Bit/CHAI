@@ -18,28 +18,29 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: windows-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # Checking-out repository under $GITHUB_WORKSPACE, so that job can access it
       - uses: actions/checkout@v2
       
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.x
           
-      # Switch app.config to release version
+      # Switching app.config to release version
       - name: Set app.config
         run: Set-Content -Path ${{ env.CONFIG_PATH }} -Value "$env:APP_CONFIG"
 
+      # Restoring project dependencies
       - run: dotnet restore ${{ env.PROJECT_PATH }}
-
+      
+      # Building Project
       - run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
-
+      
+      # Building project as a single executable
       - run: dotnet publish ${{ env.PROJECT_PATH }} -c Release --self-contained -r win-x64 -p:PublishSingleFile=true --no-build
-
-      - run: Get-ChildItem -Recurse
-
+      
+      # Creating tagged release on github
       - uses: actions/create-release@v1
         id: create_release
         env:
@@ -47,7 +48,8 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: CHAI ${{ github.ref }}
-
+          
+      # Adding executable to release
       - uses: csexton/release-asset-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
